@@ -1,0 +1,75 @@
+@php use Illuminate\Contracts\Auth\MustVerifyEmail; @endphp
+<x-layouts.app :title="__('Profile | Settings')">
+    <section class="w-full">
+        @include('partials.settings-heading')
+
+        <x-settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
+            <x-form id="profile-form" method="put" action="{{ route('settings.profile.update') }}" class="my-6 w-full space-y-6">
+                <x-input type="text" :label="__('Name')" name="name"
+                         value="{{ old('name', $user->name) }}" required autofocus
+                         autocomplete="name"/>
+
+                <div>
+                    <x-input type="email" :label="__('Email')" name="email"
+                             value="{{ old('email', $user->email) }}" required
+                             autocomplete="email"/>
+
+                    @if (auth()->user() instanceof MustVerifyEmail &&! auth()->user()->hasVerifiedEmail())
+                        <div>
+                            <x-text class="mt-4">
+                                {{ __('Your email address is unverified.') }}
+
+                                <x-button variant="link" :formaction="route('verification.store')" name="_method"
+                                          value="post">
+                                    {{ __('Click here to re-send the verification email.') }}
+                                </x-button>
+                            </x-text>
+
+                            @if (session('status') === 'verification-link-sent')
+                                <x-text class="mt-2 font-medium !dark:text-green-400 !text-green-600">
+                                    {{ __('A new verification link has been sent to your email address.') }}
+                                </x-text>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center justify-end">
+                        <x-button type="submit" class="w-full">{{ __('Save') }}</x-button>
+                    </div>
+                </div>
+            </x-form>
+
+            <section class="mt-10 space-y-6">
+                <div class="relative mb-5">
+                    <x-heading>{{ __('Delete account') }}</x-heading>
+                    <x-subheading>{{ __('Delete your account and all of its resources') }}</x-subheading>
+                </div>
+
+                <x-button type="button" variant="danger" data-modal-open="confirm_user_deletion">
+                    {{ __('Delete account') }}
+                </x-button>
+
+                <x-modal id="confirm_user_deletion">
+                    <x-form method="delete" action="{{ route('settings.profile.destroy') }}" class="space-y-6">
+                        <div>
+                            <x-heading size="lg">{{ __('Are you sure you want to delete your account?') }}</x-heading>
+                            <x-subheading>
+                                {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
+                            </x-subheading>
+                        </div>
+
+                        <x-input type="password" :label="__('Password')" name="password"/>
+
+                        <div class="flex justify-end space-x-2">
+                            <x-button variant="secondary"
+                                      form="confirm_user_deletion_close">{{ __('Cancel') }}</x-button>
+                            <x-button variant="danger">{{ __('Delete account') }}</x-button>
+                        </div>
+                    </x-form>
+                </x-modal>
+            </section>
+        </x-settings.layout>
+    </section>
+</x-layouts.app>
