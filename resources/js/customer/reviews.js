@@ -1,5 +1,6 @@
-import $ from 'jquery';
 import 'datatables.net';
+
+const $ = window.jQuery;
 
 $(function () {
     const table = $('#todo-reviews-table').DataTable({
@@ -11,11 +12,11 @@ $(function () {
             type: 'GET',
         },
         columns: [
-            { data: 'DT_RowIndex', orderable: false, searchable: false },
-            { data: 'image', orderable: false, searchable: false },
-            { data: 'name', name: 'name' },
-            { data: 'actions', orderable: false, searchable: false },
+            {data: 'DT_RowIndex', orderable: false, searchable: false},
+            {data: 'image', orderable: false, searchable: false},
+            {data: 'name', name: 'name'},
+            {data: 'actions', orderable: false, searchable: false},
         ],
         raw: ['image', 'actions'],
     });
-}); 
+});

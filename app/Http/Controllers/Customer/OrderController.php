@@ -4,12 +4,11 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use Illuminate\Http\Request;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\JsonResponse;
 use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class OrderController extends Controller
 {
@@ -36,7 +35,7 @@ class OrderController extends Controller
     /**
      * Display the specified order.
      */
-    public function show(Request $request, Order $order)
+    public function show(Request $request, Order $order): View
     {
         if (Auth::id() !== $order->user_id) {
             abort(403, 'You are not authorized to view this order.');
@@ -67,4 +66,4 @@ class OrderController extends Controller
 
         return response()->json(['message' => 'Order has been cancelled successfully.']);
     }
-} 
+}

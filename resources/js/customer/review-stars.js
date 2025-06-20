@@ -1,5 +1,5 @@
-import { Toast } from '../utils/toast.js';
-import { api } from '../utils/api.js';
+import {Toast} from '../utils/toast.js';
+import {api} from '../utils/api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const starWidget = document.getElementById('star-widget');
@@ -43,19 +43,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // open modal (simple Tailwind/Alpine-less: just remove `hidden`)
-    if(writeBtn){
-    writeBtn.addEventListener('click', () => {
-        // Pre-fill form when updating
-        const bodyField = document.getElementById('review-body');
-        if (starWidget.dataset.currentBody) {
-            bodyField.value = starWidget.dataset.currentBody;
-        }
-        ratingInput.value = currentRating;
-        highlight(currentRating);
-        reviewModal?.classList.remove('hidden');
-        reviewModal?.classList.add('flex');
-    });
+    // open modal (simple Tailwind: just remove `hidden`)
+    if (writeBtn) {
+        writeBtn.addEventListener('click', () => {
+            // Pre-fill form when updating
+            const bodyField = document.getElementById('review-body');
+            if (starWidget.dataset.currentBody) {
+                bodyField.value = starWidget.dataset.currentBody;
+            }
+            ratingInput.value = currentRating;
+            highlight(currentRating);
+            reviewModal?.classList.remove('hidden');
+            reviewModal?.classList.add('flex');
+        });
     }
 
     // submit review
@@ -94,4 +94,4 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
-}); 
+});

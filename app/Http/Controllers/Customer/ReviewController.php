@@ -5,19 +5,25 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductReview;
+use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
+use Yajra\DataTables\Facades\DataTables;
 
 class ReviewController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         return view('customer.reviews.index');
     }
 
     // Data for products needing review
+
+    /**
+     * @throws Exception
+     */
     public function pendingData(Request $request): JsonResponse
     {
         $userId = Auth::id();
@@ -46,6 +52,10 @@ class ReviewController extends Controller
     }
 
     // Data for user reviews
+
+    /**
+     * @throws Exception
+     */
     public function mineData(Request $request): JsonResponse
     {
         $query = ProductReview::with('product')
@@ -53,9 +63,9 @@ class ReviewController extends Controller
             ->latest();
 
         if ($search = $request->input('search_value')) {
-            $query->where(function($q) use ($search){
+            $query->where(function ($q) use ($search) {
                 $q->where('body', 'like', "%$search%")
-                  ->orWhereHas('product', fn($p)=>$p->where('name','like',"%$search%"));
+                    ->orWhereHas('product', fn($p) => $p->where('name', 'like', "%$search%"));
             });
         }
 

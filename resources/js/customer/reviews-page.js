@@ -1,5 +1,5 @@
-import { Toast } from '../utils/toast.js';
-import { api } from '../utils/api.js';
+import {Toast} from '../utils/toast.js';
+import {api} from '../utils/api.js';
 
 const $ = window.jQuery;
 
@@ -20,15 +20,15 @@ $(function () {
         serverSide: true,
         ajax: {
             url: '/my/reviews/pending/data',
-            data: function(d){
+            data: function (d) {
                 d.search_value = $('#pending-search').val();
             }
         },
         columns: [
-            { data: 'DT_RowIndex', orderable: false, searchable: false },
-            { data: 'image', orderable: false, searchable: false },
-            { data: 'name', name: 'name' },
-            { data: 'actions', orderable: false, searchable: false },
+            {data: 'DT_RowIndex', orderable: false, searchable: false},
+            {data: 'image', orderable: false, searchable: false},
+            {data: 'name', name: 'name'},
+            {data: 'actions', orderable: false, searchable: false},
         ],
         raw: ['image', 'actions'],
     });
@@ -39,16 +39,16 @@ $(function () {
         serverSide: true,
         ajax: {
             url: '/my/reviews/mine/data',
-            data: function(d){
+            data: function (d) {
                 d.search_value = $('#mine-search').val();
             }
         },
         columns: [
-            { data: 'DT_RowIndex', orderable: false, searchable: false },
-            { data: 'image', orderable: false, searchable: false },
-            { data: 'product', name: 'product.name' },
-            { data: 'rating', name: 'rating', orderable: false, searchable: false },
-            { data: 'actions', orderable: false, searchable: false },
+            {data: 'DT_RowIndex', orderable: false, searchable: false},
+            {data: 'image', orderable: false, searchable: false},
+            {data: 'product', name: 'product.name'},
+            {data: 'rating', name: 'rating', orderable: false, searchable: false},
+            {data: 'actions', orderable: false, searchable: false},
         ],
         raw: ['image', 'rating', 'actions'],
     });
@@ -56,7 +56,7 @@ $(function () {
     // Modal handlers
     $(document).on('click', '.write-review-btn, .edit-review-btn', function () {
         const productId = $(this).data('product-id');
-        const reviewId = $(this).data('review-id');
+        $(this).data('review-id');
         const productName = $(this).data('product-name');
         const rating = $(this).data('rating') || 0;
         const body = $(this).data('body') || '';
@@ -73,6 +73,7 @@ $(function () {
     // Star widget logic inside modal
     let currentRating = 0;
     const stars = document.querySelectorAll('#star-widget .star');
+
     function highlight(val) {
         stars.forEach(s => {
             if (s.dataset.value <= val) {
@@ -84,6 +85,7 @@ $(function () {
             }
         });
     }
+
     stars.forEach(star => {
         star.addEventListener('mouseenter', () => highlight(star.dataset.value));
         star.addEventListener('mouseleave', () => highlight(currentRating));
@@ -98,7 +100,10 @@ $(function () {
         e.preventDefault();
         const productId = $('#product-id-hidden').val();
         const rating = $('#review-rating').val();
-        if (rating === '0') { Toast.info('Pick stars'); return; }
+        if (rating === '0') {
+            Toast.info('Pick stars');
+            return;
+        }
         const url = `/products/${productId}/reviews`;
         const formData = new FormData(this);
         try {
@@ -111,4 +116,4 @@ $(function () {
             Toast.error(err.message || 'Error');
         }
     });
-}); 
+});

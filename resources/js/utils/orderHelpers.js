@@ -1,4 +1,5 @@
 import { Confirm, Toast } from './toast.js';
+import { api } from './api.js';
 
 /**
  * Cancel an order at a given endpoint.
@@ -13,25 +14,7 @@ export function cancelOrder(url, onSuccess = () => {}) {
     }).then((result) => {
         if (!result.isConfirmed) return;
 
-        const token = document.querySelector('meta[name="csrf-token"]')?.content || '';
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': token,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify({}),
-        })
-            .then(async (resp) => {
-                if (!resp.ok) {
-                    const txt = await resp.text();
-                    throw new Error(txt || 'Request failed');
-                }
-                return resp.json().catch(() => ({ message: 'Success' }));
-            })
+        api.post(url, {})
             .then((data) => {
                 Toast.success(data.message || 'Done');
                 onSuccess();
@@ -55,25 +38,7 @@ export function updateStatus(url, status, onSuccess = () => {}) {
     }).then((result) => {
         if (!result.isConfirmed) return;
 
-        const token = document.querySelector('meta[name="csrf-token"]')?.content || '';
-
-        fetch(url, {
-            method: 'PATCH',
-            headers: {
-                'X-CSRF-TOKEN': token,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-            },
-            credentials: 'same-origin',
-            body: JSON.stringify({ status }),
-        })
-            .then(async (resp) => {
-                if (!resp.ok) {
-                    const txt = await resp.text();
-                    throw new Error(txt || 'Request failed');
-                }
-                return resp.json().catch(() => ({ message: 'Status updated' }));
-            })
+        api.patch(url, { status })
             .then((data) => {
                 Toast.success(data.message || 'Status updated');
                 onSuccess();

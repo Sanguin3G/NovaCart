@@ -220,30 +220,6 @@ class Common
     }
 
     /**
-     * Check if string is a valid URL
-     * @param string|null $url
-     * @return bool
-     */
-    public static function isValidUrl(?string $url): bool
-    {
-        if (empty($url)) {
-            return false;
-        }
-        return filter_var($url, FILTER_VALIDATE_URL) !== false;
-    }
-
-    /**
-     * Format price with currency symbol
-     * @param float $amount
-     * @param string $currency
-     * @return string
-     */
-    public static function formatPrice(float $amount, string $currency = '$'): string
-    {
-        return $currency . number_format($amount, 2);
-    }
-
-    /**
      * Log user activity
      * @param string $action
      * @param array $data
@@ -262,14 +238,4 @@ class Common
         ]);
     }
 
-    /**
-     * Generate a unique slug
-     * @param string $string
-     * @param string $separator
-     * @return string
-     */
-    public static function generateSlug(string $string, string $separator = '-'): string
-    {
-        return Str::slug($string, $separator);
-    }
 }

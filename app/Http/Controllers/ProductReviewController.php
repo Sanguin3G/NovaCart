@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreReviewRequest;
 use App\Models\Product;
 use App\Models\ProductReview;
-use Illuminate\Http\Request;
+use Exception;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -57,6 +58,7 @@ class ProductReviewController extends Controller
 
     /**
      * Show the "to-review" page – products bought by user but not yet reviewed.
+     * @throws Exception
      */
     public function todo(Request $request)
     {
@@ -102,4 +104,4 @@ class ProductReviewController extends Controller
 
         return response()->json($reviews);
     }
-} 
+}
