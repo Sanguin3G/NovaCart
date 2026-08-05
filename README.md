@@ -1,4 +1,4 @@
-# Laravel E-Commerce Practice Project
+# NovaCart
 
 This is a practice project built with Laravel, demonstrating a simple e-commerce application. It includes features for both customers and administrators, such as product browsing, a shopping cart, an admin dashboard for managing products and orders, and a complete user authentication system.
 
@@ -16,7 +16,7 @@ This is a practice project built with Laravel, demonstrating a simple e-commerce
 ### Admin Panel (`/admin`)
 
 - **Dashboard**: An overview of site activity.
-- **Product Management**: Full CRUD (Create, Read, Update, Delete) functionality for products, managed via DataTables.
+- **Product Management**: Full CRUD (Create, Read, Update, Delete) functionality for products, managed with Blade and HTMX.
 - **Category Management**: Full CRUD functionality for product categories.
 - **Order Management**: View order details, update statuses, and cancel orders.
 - **Review Management**: View and moderate customer-submitted reviews.
@@ -26,15 +26,16 @@ This is a practice project built with Laravel, demonstrating a simple e-commerce
 - **Backend**: 
   - PHP 8.3
   - Laravel 12
-  - Laravel Passport (for API authentication)
-  - Yajra DataTables (for admin tables)
+  - Laravel Sanctum (for API authentication)
 
 - **Frontend**:
   - Blade Templates
   - Tailwind CSS 4
   - Vite
+  - Ky for small, consistent JSON requests
   - Chart.js
-  - SweetAlert2 (for interactive alerts)
+  - HTMX for lightweight HTML interactions
+  - Native browser dialogs and local SVG icons
 
 ## Installation and Setup
 
@@ -43,7 +44,7 @@ Follow these steps to get the project up and running on your local machine.
 1.  **Clone the repository**:
     ```bash
     git clone <your-repository-url>
-    cd my-laravel-practice-app
+      cd novacart
     ```
 
 2.  **Install dependencies**:
@@ -63,17 +64,28 @@ Follow these steps to get the project up and running on your local machine.
       ```
 
 4.  **Database Setup**:
-    - Open the `.env` file and configure your database connection details (DB_DATABASE, DB_USERNAME, DB_PASSWORD).
-    - Run the database migrations and seeders to create the necessary tables and sample data:
+    - The default `.env.example` uses SQLite and file-based local drivers, so no MySQL/Redis service is required for development.
+    - If you use MySQL, update the `DB_*` values in `.env` before migrating.
+    - Run the database migrations and seeders to create the necessary tables:
       ```bash
       php artisan migrate --seed
       ```
+    - Create an administrator explicitly with Tinker (the app never ships with a default password):
+      ```bash
+      php artisan tinker
+      >>> App\\Models\\Admin::create(['name' => 'Admin', 'email' => 'admin@example.com', 'password' => Hash::make('change-this'), 'role' => 'admin']);
+      ```
 
-5.  **Passport Setup**:
-    - Install Laravel Passport for API authentication:
+5.  **API authentication**:
+    - Sanctum tokens are created by the /api/login endpoint. Send the returned bearer token to /api/me and /api/logout.
       ```bash
       php artisan passport:install
       ```
+
+6.  **Public files**:
+    ```bash
+    php artisan storage:link
+    ```
 
 ## Running the Application
 

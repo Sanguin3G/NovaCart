@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     @include('partials.head')
 </head>
@@ -17,7 +17,7 @@
                 @auth
                     <a href="{{ route('dashboard') }}" class="text-sm font-medium hover:underline">{{ __('Dashboard') }}</a>
                 @else
-                    <a href="{{ route('login-form') }}" class="text-sm font-medium hover:underline">{{ __('Log in') }}</a>
+                    <a href="{{ route('login.form') }}" class="text-sm font-medium hover:underline">{{ __('Log in') }}</a>
 
                     @if (Route::has('register-form'))
                         <a href="{{ route('register-form') }}" class="inline-flex items-center px-8 py-2 rounded-md text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 shadow">{{ __('Register') }}</a>
@@ -38,7 +38,7 @@
                     <a href="{{ route('products.index') }}" class="inline-flex items-center px-8 py-3 rounded-md text-base font-semibold text-white bg-orange-600 hover:bg-orange-700 shadow">{{ __('Start Shopping') }}</a>
 
                     @guest
-                        <a href="{{ route('login-form') }}" class="inline-flex items-center px-8 py-3 rounded-md text-base font-semibold text-orange-600 border border-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20">{{ __('Log in') }}</a>
+                        <a href="{{ route('login.form') }}" class="inline-flex items-center px-8 py-3 rounded-md text-base font-semibold text-orange-600 border border-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20">{{ __('Log in') }}</a>
                         <a href="{{ route('register-form') }}" class="inline-flex items-center px-8 py-3 rounded-md text-base font-semibold text-white bg-orange-600 hover:bg-orange-700 shadow">{{ __('Register') }}</a>
                     @endguest
                 </div>

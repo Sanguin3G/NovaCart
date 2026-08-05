@@ -1,11 +1,10 @@
-import 'instant.page';
+import htmx from 'htmx.org';
 import './actions/popover';
 import './actions/delete';
 import './actions/statusToggle';
 import './actions/loading';
 import './actions/modal';
 import './actions/sidebar';
-import 'sweetalert2/dist/sweetalert2.min.css';
 import {Confirm, Toast} from './utils/toast.js';
 import {api, formWithMethod} from './utils/api';
 import Chart from 'chart.js/auto';
@@ -18,6 +17,14 @@ import './customer/order-actions.js';
 import './admin/order-actions.js';
 import {initButtonLoading, setButtonLoading} from './utils/buttonLoading';
 import {updateCartIcon} from './utils/uiHelpers.js';
+import './theme.js';
+
+window.htmx = htmx;
+document.addEventListener('htmx:configRequest', (event) => {
+    event.detail.headers['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')?.content;
+    event.detail.headers.Accept = 'text/html';
+});
+document.addEventListener('htmx:responseError', () => Toast.error('Could not load that section. Please try again.'));
 
 // Make utilities available globally
 window.Toast = Toast;
@@ -37,7 +44,7 @@ window.addEventListener('error', (event) => {
 // Handle unhandled promise rejections
 window.addEventListener('unhandledrejection', (event) => {
     event.preventDefault();
-    const message = event.reason?.response?.data?.message ||
+    const message = event.reason?.data?.message ||
         event.reason?.message ||
         'An unexpected error occurred';
     console.error('Unhandled rejection:', event.reason);

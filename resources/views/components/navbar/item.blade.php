@@ -14,7 +14,7 @@
     $slot->isNotEmpty() ? 'px-3' : 'size-10',
 ]) }}>
     <?php if (is_string($before) && $before !== ''): ?>
-        <x-dynamic-component :component="$before" aria-hidden="true" width="20" height="20" class="shrink-0" />
+        <x-icon :name="$before" aria-hidden="true" width="20" height="20" class="shrink-0" />
     <?php else: ?>
         {{ $before }}
     <?php endif; ?>
@@ -22,7 +22,7 @@
         <div class="flex-1 text-sm font-medium leading-none whitespace-nowrap [[data-nav-footer]_&]:hidden [[data-nav-sidebar]_[data-nav-footer]_&]:block">{{ $slot }}</div>
     <?php endif; ?>
     <?php if (is_string($after) && $after !== ''): ?>
-        <x-dynamic-component :component="$after" aria-hidden="true"  width="20" height="20" class="shrink-0 ml-1" />
+        <x-icon :name="$after" aria-hidden="true" width="20" height="20" class="shrink-0 ml-1" />
     <?php else: ?>
         {{ $after }}
     <?php endif; ?>

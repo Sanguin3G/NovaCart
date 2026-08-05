@@ -24,17 +24,21 @@ class ProductController extends Controller
         return view('admin.products.index', compact('categories'));
     }
 
-    /**
-     * Get products data for DataTables.
-     * @throws Exception
-     */
-    public function getData(Request $request): JsonResponse
+    public function getData(Request $request): View
     {
-        // AJAX-only endpoint to prevent direct URL access
-        if ($request->ajax()) {
-            return (new Product())->getProductData($request);
+        $query = Product::with('category')->latest();
+        if ($request->filled('status_filter') && $request->status_filter !== 'all') {
+            $query->where('is_active', $request->status_filter === 'active');
         }
-        abort(403, 'Direct access not allowed.');
+        if ($request->filled('category_id') && $request->category_id !== 'all') {
+            $query->where('category_id', $request->category_id);
+        }
+        if ($search = $request->input('search')) {
+            $query->where(fn ($q) => $q->where('name', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%"));
+        }
+        $products = $query->paginate(10)->withQueryString();
+        return view('admin.products.partials.table', compact('products'));
     }
 
     /**
@@ -80,9 +84,11 @@ class ProductController extends Controller
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'html' => view('admin.products.partials.form', [
+                'html' => view('admin.products.form', [
                     'categories' => $categories,
-                    'product' => new Product()
+                    'product' => new Product(),
+                    'action' => route('admin.products.store'),
+                    'submitButtonText' => __('Create Product'),
                 ])->render()
             ]);
         }
@@ -100,10 +106,12 @@ class ProductController extends Controller
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'html' => view('admin.products.partials.form', [
+                'html' => view('admin.products.form', [
                     'product' => $product,
                     'categories' => $categories,
-                    'isEdit' => true
+                    'isEdit' => true,
+                    'action' => route('admin.products.update', $product),
+                    'submitButtonText' => __('Update Product'),
                 ])->render()
             ]);
         }

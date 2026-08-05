@@ -44,17 +44,6 @@ document.addEventListener('DOMContentLoaded', function () {
             summaryItemsContainer.insertAdjacentHTML('beforeend', row);
         });
 
-        // Initialize DataTable minimal (if library loaded)
-        if (window.$ && $.fn.DataTable && !$('#order-summary-table').hasClass('dataTable')) {
-            $('#order-summary-table').DataTable({
-                paging: false,
-                searching: false,
-                info: false,
-                ordering: false,
-                responsive: true,
-            });
-        }
-
         summaryTotalEl.textContent = `$${parseFloat(data.total).toFixed(2)}`;
     }
     
@@ -98,4 +87,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Initial load
     fetchCartSummary();
-}); 
+});

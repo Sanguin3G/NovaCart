@@ -1,5 +1,3 @@
-import 'datatables.net';
-
 const $ = window.jQuery;
 
 $(function () {

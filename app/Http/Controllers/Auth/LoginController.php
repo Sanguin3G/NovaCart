@@ -26,28 +26,13 @@ class LoginController extends Controller
         $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
 
-        $authenticated = false;
-
-        // Try admin guard first
         if (Auth::guard('admin')->attempt($credentials, $remember)) {
-            // Also log into the default web guard so auth middleware passes
-            Auth::login(Auth::guard('admin')->user(), $remember);
-            $authenticated = true;
-        }
-
-        // If not admin, try as regular user
-        if (!$authenticated && Auth::attempt($credentials, $remember)) {
-            $authenticated = true;
-        }
-
-        if ($authenticated) {
             $request->session()->regenerate();
+            return redirect()->intended(route('dashboard'));
+        }
 
-            // Determine destination: admins -> dashboard, others -> customer dashboard
-            if (Auth::guard('admin')->check()) {
-                return redirect()->intended(route('dashboard'));
-            }
-
+        if (Auth::guard('web')->attempt($credentials, $remember)) {
+            $request->session()->regenerate();
             return redirect()->intended(route('customer.dashboard'));
         }
 
@@ -59,6 +44,7 @@ class LoginController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
+        Auth::guard('admin')->logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect('/');

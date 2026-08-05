@@ -4,19 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProductReview;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use Yajra\DataTables\Facades\DataTables;
 
 class ProductReviewController extends Controller
 {
-    /**
-     * DataTables JSON with all reviews (including disabled).
-     * @throws Exception
-     */
-    public function data(Request $request): JsonResponse
+    public function data(Request $request): View
     {
         // Authorization is handled by the `auth:admin` middleware on the route group.
 
@@ -31,29 +25,14 @@ class ProductReviewController extends Controller
             $query->whereNotNull('deleted_at');
         }
 
-        return DataTables::of($query)
-            ->addIndexColumn()
-            ->addColumn('product', fn($r) => e($r->product->name))
-            ->addColumn('reviewer', function ($r) {
-                return $r->user ? e($r->user->name) : e($r->reviewer_name);
-            })
-            ->editColumn('rating', fn($r) => str_repeat('★', $r->rating))
-            ->addColumn('status', function ($r) {
-                return view('components.status-toggle', [
-                    'url' => route('admin.reviews.disable', $r),
-                    'checked' => !$r->trashed(),
-                ])->render();
-            })
-            ->addColumn('actions', function ($r) {
-                $showUrl = route('admin.reviews.show', $r);
-                return '<button type="button" data-url="' . $showUrl . '" class="view-btn bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs">' . __('Detail') . '</button>';
-            })
-            ->orderColumn('status', function ($query, $order) {
-                // NULL deleted_at means active, so order by active first when ascending
-                return $query->orderBy('deleted_at', $order);
-            })
-            ->rawColumns(['status', 'actions'])
-            ->make();
+        if ($search = $request->input('search')) {
+            $query->where(function ($q) use ($search) {
+                $q->where('body', 'like', "%{$search}%")
+                    ->orWhereHas('product', fn ($product) => $product->where('name', 'like', "%{$search}%"));
+            });
+        }
+        $reviews = $query->latest()->paginate(10)->withQueryString();
+        return view('partials.admin_reviews_table', compact('reviews'));
     }
 
     /**
@@ -87,6 +66,6 @@ class ProductReviewController extends Controller
     public function index(): View
     {
         // Authorization is handled by the `auth:admin` middleware on the route group.
-        return view('admin.reviews.index');
+        return view('admin.reviews.htmx-index');
     }
 }

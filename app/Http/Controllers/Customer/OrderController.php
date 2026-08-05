@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,19 +16,22 @@ class OrderController extends Controller
      */
     public function index(): View
     {
-        return view('customer.orders.index');
+        return view('customer.orders.htmx-index');
     }
 
-    /**
-     * Get order data for DataTables.
-     * @throws Exception
-     */
-    public function getData(Request $request): JsonResponse
+    public function getData(Request $request): View
     {
-        if ($request->ajax()) {
-            return (new Order())->getCustomerOrderData($request);
+        $query = Order::where('user_id', Auth::id())
+            ->withCount('orderItems')
+            ->latest();
+        if ($request->filled('status_filter') && $request->status_filter !== 'all') {
+            $query->where('status', $request->status_filter);
         }
-        abort(403, 'Direct access not allowed.');
+        if ($search = $request->input('search')) {
+            $query->where('order_number', 'like', "%{$search}%");
+        }
+        $orders = $query->paginate(10)->withQueryString();
+        return view('customer.orders.partials.table', compact('orders'));
     }
 
     /**

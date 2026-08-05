@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
@@ -10,7 +10,9 @@
                     <x-phosphor-list aria-hidden="true" width="20" height="20" />
                 </x-sidebar.toggle>
 
-                @php($dashboardUrl = auth('admin')->check() ? route('dashboard') : route('customer.dashboard'))
+                @php($isAdmin = auth('admin')->check())
+                @php($currentUser = auth('admin')->user() ?? auth('web')->user())
+                @php($dashboardUrl = $isAdmin ? route('dashboard') : route('customer.dashboard'))
                 <a href="{{ $dashboardUrl }}" class="ml-2 mr-5 flex items-center space-x-2 lg:ml-0">
                     <x-app-logo />
                 </a>
@@ -20,8 +22,8 @@
                         {{ __('Dashboard') }}
                     </x-navbar.item>
 
-                    @auth
-                        @unless(auth('admin')->check())
+                    @if($currentUser)
+                        @unless($isAdmin)
                             <x-navbar.item before="phosphor-shopping-cart" :href="route('products.index')" :current="request()->routeIs('products.*')">{{ __('Products') }}</x-navbar.item>
                             <x-navbar.item before="phosphor-receipt" :href="route('orders.index')" :current="request()->routeIs('orders.*')">{{ __('Orders') }}</x-navbar.item>
                             <x-navbar.item before="phosphor-shopping-cart" :href="route('cart.view')" :current="request()->routeIs('cart.*')">
@@ -30,7 +32,7 @@
                                 <span id="cart-item-count" class="ml-1 inline-flex items-center justify-center rounded-full bg-orange-600 text-white text-[10px] px-1.5 py-0.5 {{ $count>0 ? '' : 'hidden' }}">{{ $count }}</span>
                             </x-navbar.item>
                         @endunless
-                    @endauth
+                    @endif
                 </x-navbar>
 
                 <x-spacer />
@@ -54,12 +56,12 @@
                 </x-navbar>
 
                 <!-- Desktop Auth Links -->
-                @auth
+                @if($currentUser)
                     <x-popover align="top" justify="right">
                         <button type="button" class="w-full group flex items-center rounded-lg p-1 hover:bg-gray-800/5 dark:hover:bg-white/10">
                             <span class="shrink-0 size-8 bg-gray-200 rounded-sm overflow-hidden dark:bg-gray-700">
                                 <span class="w-full h-full flex items-center justify-center text-sm">
-                                    {{ auth()->user()->initials() }}
+                                    {{ $currentUser->initials() }}
                                 </span>
                             </span>
                             <span class="shrink-0 ml-auto size-8 flex justify-center items-center">
@@ -70,12 +72,12 @@
                             <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
                                     <span class="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-black dark:bg-gray-700 dark:text-white">
-                                        {{ auth()->user()->initials() }}
+                                        {{ $currentUser->initials() }}
                                     </span>
                                 </span>
                                 <div class="grid flex-1 text-left text-sm leading-tight">
-                                    <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                                    <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                                    <span class="truncate font-semibold">{{ $currentUser->name }}</span>
+                                    <span class="truncate text-xs">{{ $currentUser->email }}</span>
                                 </div>
                             </div>
                             <x-popover.separator />
@@ -88,10 +90,10 @@
                     </x-popover>
                 @else
                     <div class="flex gap-3">
-                        <a href="{{ route('login-form') }}" class="text-sm font-medium hover:underline">{{ __('Log in') }}</a>
+                        <a href="{{ route('login.form') }}" class="text-sm font-medium hover:underline">{{ __('Log in') }}</a>
                         <a href="{{ route('register-form') }}" class="inline-flex items-center px-4 py-2 rounded-md text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 shadow">{{ __('Register') }}</a>
                     </div>
-                @endauth
+                @endif
             </x-container>
         </x-header>
 
@@ -101,13 +103,13 @@
                 <x-phosphor-x aria-hidden="true" width="20" height="20" />
             </x-sidebar.toggle>
 
-            <a href="{{ route('dashboard') }}" class="ml-1 flex items-center space-x-2">
+            <a href="{{ $dashboardUrl }}" class="ml-1 flex items-center space-x-2">
                 <x-app-logo />
             </a>
 
             <x-navlist>
                 <x-navlist.group :heading="__('Platform')">
-                    <x-navlist.item before="phosphor-squares-four" :href="route('dashboard')" :current="request()->routeIs('dashboard')">
+                    <x-navlist.item before="phosphor-squares-four" :href="$dashboardUrl" :current="$isAdmin ? request()->routeIs('dashboard') : request()->routeIs('customer.dashboard')">
                     {{ __('Dashboard') }}
                     </x-navlist.item>
                 </x-navlist.group>

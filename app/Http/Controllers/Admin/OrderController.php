@@ -55,17 +55,19 @@ class OrderController extends Controller
      */
     public function index(): View
     {
-        return view('admin.orders.index');
+        return view('admin.orders.htmx-index');
     }
 
-    /**
-     * Return DataTables JSON for all orders (admin).
-     */
-    public function getData(Request $request): JsonResponse
+    public function getData(Request $request): View
     {
-        if ($request->ajax()) {
-            return (new Order())->getAdminOrderData($request);
+        $query = Order::with('user')->withCount('orderItems')->latest();
+        if ($request->filled('status_filter') && $request->status_filter !== 'all') {
+            $query->where('status', $request->status_filter);
         }
-        abort(403, 'Direct access not allowed.');
+        if ($search = $request->input('search')) {
+            $query->where('order_number', 'like', "%{$search}%");
+        }
+        $orders = $query->paginate(10)->withQueryString();
+        return view('partials.admin_orders_table', compact('orders'));
     }
 }

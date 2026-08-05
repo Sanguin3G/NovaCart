@@ -3,15 +3,11 @@
 namespace App\Models;
 
 use App\Libraries\Common;
-use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\DataTables;
 
 class Product extends Model
 {
@@ -121,62 +117,6 @@ class Product extends Model
     public function scopeInStock(Builder $query): void
     {
         $query->where('stock', '>', 0);
-    }
-
-    /**
-     * Get product data for DataTables
-     * @throws Exception
-     */
-    public function getProductData(Request $request): JsonResponse
-    {
-        $query = $this->with('category')
-            ->select('products.*');
-
-        // Status filter (cheapest check first - simple boolean comparison)
-        if ($request->filled('status_filter') && $request->status_filter !== 'all') {
-            $status = $request->status_filter === 'active';
-            $query->where('is_active', $status);
-        }
-
-        // Category filter (medium cost - single column integer comparison)
-        if ($request->filled('category_id') && $request->category_id !== 'all') {
-            $query->where('category_id', $request->category_id);
-        }
-
-        // Search (most expensive - multiple LIKE queries with wildcards)
-        if ($searchValue = $request->input('search_value')) {
-            $query->where(function ($q) use ($searchValue) {
-                $q->where('name', 'like', "%$searchValue%")
-                    ->orWhere('description', 'like', "%$searchValue%");
-            });
-        }
-
-        return DataTables::of($query)
-            ->addIndexColumn()
-            ->editColumn('price', function ($product) {
-                return $product->getFormattedPriceAttribute();
-            })
-            ->editColumn('is_active', function ($product) {
-                return view('components.status-toggle', [
-                    'url' => route('admin.products.toggleStatus', $product->id),
-                    'checked' => $product->is_active
-                ])->render();
-            })
-            ->addColumn('category_name', function ($product) {
-                return $product->category->name ?? 'N/A';
-            })
-            ->addColumn('stock_status', function ($product) {
-                return $product->isInStock() ? 'In Stock' : 'Out of Stock';
-            })
-            ->addColumn('actions', function ($product) {
-                return view('partials.action_buttons', [
-                    'editUrl' => route('admin.products.edit', $product->id),
-                    'deleteUrl' => route('admin.products.destroy', $product->id),
-                    'deleteClass' => 'delete-product'
-                ]);
-            })
-            ->rawColumns(['is_active', 'actions'])
-            ->make();
     }
 
     /**

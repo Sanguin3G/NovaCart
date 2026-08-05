@@ -7,9 +7,9 @@ use App\Http\Requests\Customer\Checkout\ProcessCheckoutRequest;
 use App\Mail\OrderProcessedMail;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\JsonResponse;
+use RuntimeException;
 
 class CheckoutController extends Controller
 {
@@ -46,44 +47,68 @@ class CheckoutController extends Controller
         $cart = Session::get('cart', []);
 
         if (empty($cart)) {
-            if ($request->ajax()) {
+            if ($request->expectsJson()) {
                 return response()->json(['message' => 'Your cart is empty.'], 400);
             }
             return redirect()->route('cart.view')->with('error', 'Your cart became empty during checkout. Please try again.');
         }
 
-        DB::beginTransaction();
         try {
-            $totalAmount = 0;
-            foreach ($cart as $item) {
-                $totalAmount += $item['price'] * $item['quantity'];
-            }
+            $order = DB::transaction(function () use ($cart, $validated, $request) {
+                $products = Product::query()
+                    ->whereIn('id', array_keys($cart))
+                    ->where('is_active', true)
+                    ->lockForUpdate()
+                    ->get()
+                    ->keyBy('id');
 
-            $order = Order::create([
-                'user_id' => Auth::check() ? Auth::id() : null,
-                'total_amount' => $totalAmount,
-                'status' => 'pending',
-                'shipping_address' => $validated['shipping_address'],
-                'billing_address' => $validated['billing_address'] ?? $validated['shipping_address'],
-                'payment_method' => $validated['payment_method'],
-                'notes' => $validated['notes'] ?? null,
-            ]);
+                if ($products->count() !== count($cart)) {
+                    throw new RuntimeException('One or more products are no longer available.');
+                }
 
-            foreach ($cart as $productId => $details) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $productId,
-                    'quantity' => $details['quantity'],
-                    'price' => $details['price'],
+                $totalAmount = 0;
+                foreach ($cart as $productId => $details) {
+                    $quantity = (int) ($details['quantity'] ?? 0);
+                    $product = $products->get($productId);
+
+                    if ($quantity < 1 || $product->stock < $quantity) {
+                        throw new RuntimeException("Not enough stock available for {$product->name}.");
+                    }
+
+                    $totalAmount += (float) $product->price * $quantity;
+                }
+
+                $order = Order::create([
+                    'user_id' => $request->user()->id,
+                    'total_amount' => $totalAmount,
+                    'status' => 'pending',
+                    'shipping_address' => $validated['shipping_address'],
+                    'billing_address' => $validated['billing_address'] ?? $validated['shipping_address'],
+                    'payment_method' => $validated['payment_method'],
+                    'notes' => $validated['notes'] ?? null,
                 ]);
-            }
 
-            DB::commit();
+                foreach ($cart as $productId => $details) {
+                    $quantity = (int) $details['quantity'];
+                    $product = $products->get($productId);
+
+                    OrderItem::create([
+                        'order_id' => $order->id,
+                        'product_id' => $product->id,
+                        'quantity' => $quantity,
+                        'price' => $product->price,
+                    ]);
+
+                    $product->decrement('stock', $quantity);
+                }
+
+                return $order;
+            });
 
             // Always send confirmation email if we have an email address
-            $userEmail = Auth::check() ? Auth::user()->email : ($validated['email'] ?? null);
+            $userEmail = $request->user()->email;
             if ($userEmail) {
-                $userName = Auth::check() ? Auth::user()->name : ($validated['name'] ?? '');
+                $userName = $request->user()->name;
 
                 $order->load('user', 'orderItems.product');
                 try {
@@ -96,7 +121,7 @@ class CheckoutController extends Controller
 
             Session::forget('cart');
 
-            if ($request->ajax()) {
+            if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Order placed successfully!',
                     'order_number' => $order->order_number,
@@ -106,15 +131,22 @@ class CheckoutController extends Controller
 
             return redirect()->route('orders.show', $order)->with('success', 'Your order #' . $order->order_number . ' has been placed successfully!');
 
+        } catch (RuntimeException $e) {
+            Log::warning('Checkout validation failed: ' . $e->getMessage());
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $e->getMessage()], 422);
+            }
+
+            return back()->with('error', $e->getMessage())->withInput();
         } catch (Exception $e) {
-            DB::rollBack();
             Log::error('Checkout Error: ' . $e->getMessage());
             
-            if ($request->ajax()) {
+            if ($request->expectsJson()) {
                 return response()->json(['message' => 'There was an error processing your order. Please try again.'], 500);
             }
             
             return back()->with('error', 'There was an error processing your order. Please try again.')->withInput();
         }
     }
-} 
+}

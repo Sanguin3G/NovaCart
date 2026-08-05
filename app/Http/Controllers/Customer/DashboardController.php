@@ -15,7 +15,8 @@ class DashboardController extends Controller
     public function index(): View
     {
         $customerTotalOrders = Order::where('user_id', Auth::id())->count();
+        $recentOrders = Order::where('user_id', Auth::id())->latest()->limit(5)->get();
 
-        return view('customer.dashboard', compact('customerTotalOrders'));
+        return view('customer.dashboard-htmx', compact('customerTotalOrders', 'recentOrders'));
     }
-} 
+}

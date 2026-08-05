@@ -49,7 +49,7 @@ class NewPasswordController extends Controller
 
             if ($request->ajax() || $request->wantsJson()) {
                 if ($status === Password::PASSWORD_RESET) {
-                    $response['redirect'] = route('login-form');
+                    $response['redirect'] = route('login.form');
                 } else {
                     $response['errors'] = ['email' => [__($status)]];
                 }
@@ -58,7 +58,7 @@ class NewPasswordController extends Controller
 
             // For non-AJAX requests, maintain the original redirect behavior
             return $status === Password::PASSWORD_RESET
-                ? to_route('login-form')->with('status', __($status))
+                ? to_route('login.form')->with('status', __($status))
                 : back()->withInput($request->only('email'))
                     ->withErrors(['email' => __($status)]);
                     

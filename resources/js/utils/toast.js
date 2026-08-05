@@ -1,144 +1,53 @@
-import Swal from 'sweetalert2';
-
-// Configure default toast settings
-const toast = Swal.mixin({
-    toast: true,
-    position: 'top-end',
-    showConfirmButton: false,
-    timer: 3000,
-    timerProgressBar: true,
-    showClass: {popup: 'swal2-toast-show', backdrop: 'swal2-backdrop-show'},
-    hideClass: {popup: 'swal2-toast-hide', backdrop: 'swal2-backdrop-hide'},
-    didOpen: (toastEl) => {
-        toastEl.addEventListener('mouseenter', Swal.stopTimer);
-        toastEl.addEventListener('mouseleave', Swal.resumeTimer);
+function container() {
+    let element = document.getElementById('toast-container');
+    if (!element) {
+        element = document.createElement('div');
+        element.id = 'toast-container';
+        element.className = 'fixed right-4 top-4 z-[100] flex w-[min(24rem,calc(100vw-2rem))] flex-col gap-3';
+        document.body.append(element);
     }
-});
-
-// Utility to detect current app theme
-function getToastTheme() {
-    const appearance = window.localStorage.getItem('appearance');
-    if (appearance === 'dark') return 'dark';
-    if (appearance === 'light') return 'light';
-    // fallback to auto for system preference
-    return 'auto';
+    return element;
 }
 
-// Toast notifications
+function show(message, type = 'success') {
+    const item = document.createElement('div');
+    const colors = {
+        success: 'border-green-200 bg-green-50 text-green-800 dark:border-green-900 dark:bg-green-950 dark:text-green-200',
+        error: 'border-red-200 bg-red-50 text-red-800 dark:border-red-900 dark:bg-red-950 dark:text-red-200',
+        info: 'border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-200',
+        warning: 'border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950 dark:text-amber-200',
+    };
+    item.className = 'rounded-lg border px-4 py-3 text-sm shadow-lg ' + (colors[type] || colors.info);
+    item.textContent = message;
+    container().append(item);
+    window.setTimeout(() => item.remove(), type === 'error' ? 5000 : 3000);
+}
+
 export const Toast = {
-    success: (message) => {
-        toast.fire({
-            icon: 'success',
-            title: message,
-            iconColor: 'var(--swal2-success)',
-            background: 'var(--swal2-background)',
-            color: 'var(--swal2-html-container-color)',
-            theme: getToastTheme(),
-        });
-    },
-    error: (message) => {
-        toast.fire({
-            icon: 'error',
-            title: message,
-            timer: 5000, // Longer for errors
-            iconColor: 'var(--swal2-error)',
-            background: 'var(--swal2-background)',
-            color: 'var(--swal2-html-container-color)',
-            theme: getToastTheme(),
-        });
-    },
-    info: (message) => {
-        toast.fire({
-            icon: 'info',
-            title: message,
-            iconColor: 'var(--swal2-info)',
-            background: 'var(--swal2-background)',
-            color: 'var(--swal2-html-container-color)',
-            theme: getToastTheme(),
-        });
-    },
-    warning: (message) => {
-        toast.fire({
-            icon: 'warning',
-            title: message,
-            iconColor: 'var(--swal2-warning)',
-            background: 'var(--swal2-background)',
-            color: 'var(--swal2-html-container-color)',
-            theme: getToastTheme(),
-        });
-    }
+    success: (message) => show(message, 'success'),
+    error: (message) => show(message, 'error'),
+    info: (message) => show(message, 'info'),
+    warning: (message) => show(message, 'warning'),
 };
 
-// Confirm dialogs
 export const Confirm = {
-    confirm: (options = {}) => {
-        return Swal.fire({
-            title: options.title || 'Are you sure?',
-            text: options.text || '',
-            icon: options.icon || 'question',
-            showCancelButton: true,
-            confirmButtonText: options.confirmText || 'Yes',
-            cancelButtonText: options.cancelText || 'Cancel',
-            confirmButtonColor: 'var(--swal2-confirm)',
-            cancelButtonColor: 'var(--swal2-cancel)',
-            background: 'var(--swal2-background)',
-            color: 'var(--swal2-html-container-color)',
-            theme: getToastTheme(),
-            reverseButtons: true,
-            showClass: {
-                popup: 'swal2-show',
-                backdrop: 'swal2-backdrop-show',
-                icon: 'swal2-icon-show'
-            },
-            hideClass: {
-                popup: 'swal2-hide',
-                backdrop: 'swal2-backdrop-hide',
-                icon: 'swal2-icon-hide'
-            },
-            ...options.customOptions
-        });
-    },
-    delete: (options = {}) => {
-        return Confirm.confirm({
-            title: options.title || 'Delete item',
-            text: options.text || 'This action cannot be undone',
-            confirmText: options.confirmText || 'Delete',
-            cancelText: options.cancelText || 'Cancel',
-            icon: 'warning',
-            customOptions: {
-                confirmButtonColor: '#ef4444',
-                ...options.customOptions
-            }
-        });
-    }
+    confirm: (options = {}) => Promise.resolve({
+        isConfirmed: window.confirm([options.title || 'Are you sure?', options.text || ''].filter(Boolean).join('\n\n')),
+    }),
+    delete: (options = {}) => Confirm.confirm({
+        title: options.title || 'Delete item',
+        text: options.text || 'This action cannot be undone.',
+    }),
 };
 
-/**
- * Creates a debounced function that delays invoking the provided function.
- * @param {Function} fn The function to debounce.
- * @param {number} delay The number of milliseconds to delay.
- * @returns {Function} The new debounced function.
- */
 export function debounce(fn, delay) {
     let timeoutId;
-    return function(...args) {
-        if (timeoutId) {
-            clearTimeout(timeoutId);
-        }
-        timeoutId = setTimeout(() => {
-            fn.apply(this, args);
-        }, delay);
+    return function (...args) {
+        window.clearTimeout(timeoutId);
+        timeoutId = window.setTimeout(() => fn.apply(this, args), delay);
     };
 }
 
 export function showToast(message, type = 'success') {
-    if (type === 'error' || type === 'danger') {
-        Toast.error(message);
-    } else if (type === 'info') {
-        Toast.info(message);
-    } else if (type === 'warning') {
-        Toast.warning(message);
-    } else {
-        Toast.success(message);
-    }
+    (Toast[type] || Toast.success)(message);
 }

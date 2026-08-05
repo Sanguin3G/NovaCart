@@ -7,7 +7,6 @@
             <x-input
                 type="password"
                 name="current_password"
-                x-model="current_password"
                 :label="__('Current password')"
                 required
                 autocomplete="current-password"
@@ -15,7 +14,6 @@
             <x-input
                 type="password"
                 name="password"
-                x-model="password"
                 :label="__('New password')"
                 required
                 autocomplete="new-password"
@@ -23,7 +21,6 @@
             <x-input
                 type="password"
                 name="password_confirmation"
-                x-model="password_confirmation"
                 :label="__('Confirm Password')"
                 required
                 autocomplete="new-password"

@@ -18,7 +18,7 @@ class PasswordController extends Controller
         ]);
     }
 
-    public function update(Request $request): JsonResponse
+    public function update(Request $request): JsonResponse|\Illuminate\Http\RedirectResponse
     {
         $validated = $request->validate([
             'current_password' => ['required', 'current_password'],
@@ -29,10 +29,13 @@ class PasswordController extends Controller
             'password' => Hash::make($validated['password']),
         ]);
 
-        // Return JSON response for AJAX
-        return response()->json([
-            'success' => true,
-            'message' => 'Password updated successfully.'
-        ]);
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Password updated successfully.'
+            ]);
+        }
+
+        return to_route('settings.profile.edit')->with('status', 'password-updated');
     }
 }

@@ -62,13 +62,13 @@ $classes = [
     </span>
     <span class="button-content">
       <?php if (is_string($before) && $before !== ''): ?>
-        <x-dynamic-component :component="$before" aria-hidden="true" width="20" height="20" class="shrink-0 opacity-80 group-hover:opacity-100 -ml-0.5" />
+        <x-icon :name="$before" aria-hidden="true" width="20" height="20" class="shrink-0 opacity-80 group-hover:opacity-100 -ml-0.5" />
       <?php else: ?>
         {{ $before }}
       <?php endif; ?>
       <span>{{ $slot }}</span>
       <?php if (is_string($after) && $after !== ''): ?>
-        <x-dynamic-component :component="$after" aria-hidden="true" width="20" height="20" class="shrink-0 opacity-80 group-hover:opacity-100 -mr-0.5" />
+        <x-icon :name="$after" aria-hidden="true" width="20" height="20" class="shrink-0 opacity-80 group-hover:opacity-100 -mr-0.5" />
       <?php else: ?>
         {{ $after }}
       <?php endif; ?>

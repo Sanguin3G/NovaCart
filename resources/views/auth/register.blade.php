@@ -49,7 +49,7 @@
 
         <div class="space-x-1 text-center text-sm text-gray-600 dark:text-gray-400">
             {{ __('Already have an account?') }}
-            <x-link :href="route('login-form')">Log in</x-link>
+            <x-link :href="route('login.form')">Log in</x-link>
         </div>
     </div>
 </x-layouts.auth>

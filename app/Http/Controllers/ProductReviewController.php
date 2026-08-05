@@ -5,12 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreReviewRequest;
 use App\Models\Product;
 use App\Models\ProductReview;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Yajra\DataTables\Facades\DataTables;
 
 class ProductReviewController extends Controller
 {
@@ -62,7 +60,7 @@ class ProductReviewController extends Controller
      */
     public function todo(Request $request)
     {
-        if ($request->ajax()) {
+        if ($request->header('HX-Request')) {
             $user = Auth::user();
 
             // Fetch products from completed orders of user, not yet reviewed
@@ -81,18 +79,11 @@ class ProductReviewController extends Controller
                 })
                 ->whereNotIn('id', $subQuery);
 
-            return DataTables::of($products)
-                ->addIndexColumn()
-                ->addColumn('image', fn($p) => '<img src="' . e($p->image_url) . '" alt="' . e($p->name) . '" class="h-12">')
-                ->addColumn('actions', function ($p) {
-                    $url = route('products.show', $p); // direct to product detail, or could open modal
-                    return '<a href="' . $url . '#write-review" class="text-orange-600 hover:underline">Review</a>';
-                })
-                ->rawColumns(['image', 'actions'])
-                ->make();
+            $products = $products->latest()->paginate(10)->withQueryString();
+            return view('partials.customer_todo_reviews_table', compact('products'));
         }
 
-        return view('customer.reviews.todo');
+        return view('customer.reviews.htmx-todo');
     }
 
     public function list(Product $product, Request $request): JsonResponse

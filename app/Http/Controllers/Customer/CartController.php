@@ -19,7 +19,7 @@ class CartController extends Controller
      */
     private function getCartItemCount(): int
     {
-        return count(Session::get('cart', []));
+        return collect(Session::get('cart', []))->sum('quantity');
     }
 
     /**
@@ -52,10 +52,31 @@ class CartController extends Controller
         $validated = $request->validated();
         $quantity = $validated['quantity'];
 
+        if (!$product->is_active || $product->stock < $quantity) {
+            $message = !$product->is_active
+                ? 'This product is no longer available.'
+                : 'Not enough stock available.';
+
+            if ($request->expectsJson()) {
+                return response()->json(['message' => $message], 422);
+            }
+
+            return back()->with('error', $message);
+        }
+
         $cart = Session::get('cart', []);
 
         if (isset($cart[$product->id])) {
-            $cart[$product->id]['quantity'] += $quantity;
+            $newQuantity = $cart[$product->id]['quantity'] + $quantity;
+            if ($newQuantity > $product->stock) {
+                if ($request->expectsJson()) {
+                    return response()->json(['message' => 'Not enough stock available.'], 422);
+                }
+
+                return back()->with('error', 'Not enough stock available.');
+            }
+
+            $cart[$product->id]['quantity'] = $newQuantity;
         } else {
             $cart[$product->id] = [
                 'id' => $product->id,

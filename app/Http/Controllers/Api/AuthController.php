@@ -3,16 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Client\ConnectionException;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     /**
-     * Issue an access token via the password grant.
-     * @throws ConnectionException
+     * Issue a Sanctum personal access token.
      */
     public function login(Request $request)
     {
@@ -21,16 +20,14 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        $response = Http::asForm()->post(url('/oauth/token'), [
-            'grant_type' => 'password',
-            'client_id' => env('PASSPORT_PASSWORD_CLIENT_ID'),
-            'client_secret' => env('PASSPORT_PASSWORD_CLIENT_SECRET'),
-            'username' => $validated['email'],
-            'password' => $validated['password'],
-            'scope' => '',
+        $user = User::where('email', $validated['email'])->first();
+        if (!$user || !Hash::check($validated['password'], $user->password)) {
+            return response()->json(['message' => 'Invalid credentials.'], 422);
+        }
+        return response()->json([
+            'token' => $user->createToken('api')->plainTextToken,
+            'user' => $user,
         ]);
-
-        return $response->json();
     }
 
     /**
@@ -38,7 +35,7 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-        $request->user()?->token()?->revoke();
+        $request->user()?->currentAccessToken()?->delete();
 
         return response()->json(['message' => 'Logged out']);
     }

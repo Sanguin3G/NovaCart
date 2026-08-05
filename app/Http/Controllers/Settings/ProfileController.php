@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -20,13 +19,13 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function update(Request $request): JsonResponse
+    public function update(Request $request): JsonResponse|RedirectResponse
     {
         $user = $request->user();
 
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique($user->getTable())->ignore($user->getKey())],
         ]);
 
         $user->fill($validated);
@@ -35,28 +34,36 @@ class ProfileController extends Controller
         }
         $user->save();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Profile updated successfully.',
-        ]);
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile updated successfully.',
+            ]);
+        }
+
+        return to_route('settings.profile.edit')->with('status', 'profile-updated');
     }
 
-    public function destroy(Request $request): JsonResponse
+    public function destroy(Request $request): JsonResponse|RedirectResponse
     {
         $request->validate([
             'password' => ['required', 'current_password'],
         ]);
 
-        Auth::logout();
         $user = $request->user();
+        Auth::guard('web')->logout();
+        Auth::guard('admin')->logout();
         $user->delete();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Always respond with JSON for AJAX-driven delete
-        return response()->json([
-            'success' => true,
-            'redirect' => route('home'),
-        ]);
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'redirect' => route('home'),
+            ]);
+        }
+
+        return to_route('home');
     }
 }

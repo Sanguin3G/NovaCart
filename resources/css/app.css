@@ -9,158 +9,6 @@
 @custom-variant dark (&:where(.dark, .dark *));
 @custom-variant aria-current (&[aria-current="page"]);
 
-/* SweetAlert2 Customization */
-:root {
-    /* Colors */
-    --swal2-white: #ffffff;
-    --swal2-black: #000000;
-    --swal2-success: #10b981;
-    --swal2-error: #ef4444;
-    --swal2-warning: #f59e0b;
-    --swal2-info: #3b82f6;
-    --swal2-question: #6b7280;
-
-    /* Light theme */
-    --swal2-background: var(--swal2-white);
-    --swal2-html-container-color: #1f2937;
-    --swal2-title-color: #111827;
-    --swal2-content-color: #4b5563;
-    --swal2-confirm: #4f46e5;
-    --swal2-cancel: #6b7280;
-    --swal2-border: #e5e7eb;
-}
-
-.dark {
-    /* Dark theme */
-    --swal2-background: #1f2937;
-    --swal2-html-container-color: #f3f4f6;
-    --swal2-title-color: #f9fafb;
-    --swal2-content-color: #d1d5db;
-    --swal2-confirm: #6366f1;
-    --swal2-cancel: #4b5563;
-    --swal2-border: #374151;
-}
-
-/* SweetAlert2 Container */
-.swal2-container {
-    z-index: 99999;
-}
-
-/* Toast animations */
-@keyframes swal2-toast-show {
-    0% {
-        transform: translateY(-0.625em) rotateZ(2deg);
-        opacity: 0;
-    }
-    100% {
-        transform: translateY(0) rotateZ(0);
-        opacity: 1;
-    }
-}
-
-@keyframes swal2-toast-hide {
-    0% {
-        transform: translateY(0) rotateZ(0);
-        opacity: 1;
-    }
-    100% {
-        transform: translateY(-0.625em) rotateZ(-2deg);
-        opacity: 0;
-    }
-}
-
-/* Toast styling */
-.swal2-toast {
-    background: var(--swal2-background);
-    color: var(--swal2-html-container-color);
-    border: 1px solid var(--swal2-border);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    border-radius: 0.5rem;
-}
-
-/* Popup styling */
-.swal2-popup {
-    background: var(--swal2-background);
-    color: var(--swal2-html-container-color);
-    border: 1px solid var(--swal2-border);
-    border-radius: 0.5rem;
-}
-
-.swal2-title {
-    color: var(--swal2-title-color);
-    font-weight: 600;
-}
-
-.swal2-html-container {
-    color: var(--swal2-html-container-color);
-}
-
-/* Buttons */
-.swal2-styled {
-    border-radius: 0.375rem;
-    padding: 0.5rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
-}
-
-.swal2-styled:focus {
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
-}
-
-.swal2-confirm {
-    background-color: var(--swal2-confirm);
-}
-
-.swal2-cancel {
-    background-color: var(--swal2-cancel);
-}
-
-/* Input fields */
-.swal2-input,
-.swal2-file,
-.swal2-textarea {
-    border: 1px solid var(--swal2-border);
-    border-radius: 0.375rem;
-    color: var(--swal2-html-container-color);
-    background: var(--swal2-background);
-}
-
-.swal2-input:focus,
-.swal2-file:focus,
-.swal2-textarea:focus {
-    border-color: var(--swal2-confirm);
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-}
-
-/* Progress steps */
-.swal2-progress-steps .swal2-progress-step {
-    background: var(--swal2-confirm);
-}
-
-.swal2-progress-steps .swal2-progress-step-line {
-    background: var(--swal2-border);
-}
-
-/* Loading animation */
-.swal2-loading {
-    border-color: var(--swal2-confirm);
-    border-right-color: transparent;
-}
-
-/* Close button */
-.swal2-close:focus {
-    box-shadow: none;
-}
-
-/* Responsive adjustments */
-@media (max-width: 640px) {
-    .swal2-popup {
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
-    }
-}
-
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
     --color-accent: var(--color-gray-800);
@@ -176,94 +24,25 @@
     }
 }
 
-/* Dark mode DataTables overrides */
-.dark table.dataTable,
-.dark .dataTables_wrapper {
-    background-color: #1f2937; /* dark background */
-    color: #f3f4f6; /* light text */
+@layer base {
+    :root { color-scheme: light; }
+    :root.dark { color-scheme: dark; }
 }
 
-.dark table.dataTable th,
-.dark table.dataTable td {
-    border-bottom: 1px solid #374151;
-}
-
-.dark table.dataTable thead th {
-    background-color: #374151;
-    color: #f3f4f6;
-}
-
-.dark .dataTables_wrapper .dataTables_filter input,
-.dark .dataTables_wrapper .dataTables_length select {
-    background-color: #374151;
-    color: #f3f4f6;
-    border: 1px solid #374151;
-}
-
-.dark .dataTables_wrapper .dataTables_paginate .paginate_button {
-    color: #f3f4f6;
-}
-
-/* Button loading spinner */
 @layer components {
-    /* Button loading states using inline SVG spinner and grid stacking */
-    .btn {
-        @apply relative grid place-items-center;
-    }
-
-    /* Stack all children in same grid cell for cross-fade */
-    .btn > * {
-        @apply col-start-1 row-start-1 transition-all duration-300;
-    }
-
-    /* Default: hide the inline spinner */
-    .loading-indicator {
-        @apply opacity-0 w-0 h-0 overflow-visible flex items-center justify-center gap-2;
-    }
-
-    /* Default: show the normal button content */
-    .button-content {
-        @apply inline-flex items-center justify-center gap-2;
-    }
-
-    /* LOADING STATE */
-    .btn[data-loading] {
-        @apply pointer-events-none cursor-wait bg-indigo-400;
-    }
-
-    /* Hide normal content when loading */
-    .btn[data-loading] .button-content {
-        @apply opacity-0 max-h-0 overflow-hidden;
-    }
-
-    /* Show inline spinner when loading */
-    .btn[data-loading] .loading-indicator {
-        @apply opacity-100 w-auto h-auto;
-    }
+    .btn { @apply relative grid place-items-center; }
+    .btn > * { @apply col-start-1 row-start-1 transition-all duration-300; }
+    .loading-indicator { @apply opacity-0 w-0 h-0 overflow-visible flex items-center justify-center gap-2; }
+    .button-content { @apply inline-flex items-center justify-center gap-2; }
+    .btn[data-loading] { @apply pointer-events-none cursor-wait bg-indigo-400; }
+    .btn[data-loading] .button-content { @apply opacity-0 max-h-0 overflow-hidden; }
+    .btn[data-loading] .loading-indicator { @apply opacity-100 w-auto h-auto; }
 }
 
-/* Restore native appearance for DataTables length select */
-.dataTables_length select {
-    appearance: auto !important;
-    background-image: none !important;
-    background-position: initial !important;
-    background-repeat: initial !important;
-    padding-right: 0.75rem !important;
-}
-
-.pagination-link.disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-    pointer-events: none;
-}
-
-.sort-link.active {
-    font-weight: 600;
-}
-
-@keyframes cart-row-fade{to{opacity:0;transform:translateX(30px);height:0;margin:0;padding:0}}
-.cart-row-removing{animation:cart-row-fade .35s forwards ease}
-.cart-remove{transition:transform .2s}
-.cart-remove:hover{transform:scale(1.1)}
-
-.quantity-change:hover{background-color:#dc2626!important;color:#fff!important;transform:scale(1.1)!important}
+.pagination-link.disabled { cursor: not-allowed; opacity: .5; pointer-events: none; }
+.sort-link.active { font-weight: 600; }
+@keyframes cart-row-fade { to { opacity: 0; transform: translateX(30px); height: 0; margin: 0; padding: 0; } }
+.cart-row-removing { animation: cart-row-fade .35s forwards ease; }
+.cart-remove { transition: transform .2s; }
+.cart-remove:hover { transform: scale(1.1); }
+.quantity-change:hover { background-color: #dc2626 !important; color: #fff !important; transform: scale(1.1) !important; }

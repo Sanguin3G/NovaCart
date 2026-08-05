@@ -6,9 +6,9 @@
         <fieldset>
             <legend class="sr-only">Appearance</legend>
             <div class="inline-flex space-x-2">
-                <x-button type="button" variant="secondary" before="phosphor-sun-fill" value="light" onclick="setAppearance(this.value)">{{ __('Light') }}</x-button>
-                <x-button type="button" variant="secondary" before="phosphor-moon-fill" value="dark" onclick="setAppearance(this.value)">{{ __('Dark') }}</x-button>
-                <x-button type="button" variant="secondary" before="phosphor-monitor-fill" value="system" onclick="setAppearance(this.value)">{{ __('System') }}</x-button>
+                <x-button type="button" variant="secondary" before="phosphor-sun-fill" data-theme-option="light">{{ __('Light') }}</x-button>
+                <x-button type="button" variant="secondary" before="phosphor-moon-fill" data-theme-option="dark">{{ __('Dark') }}</x-button>
+                <x-button type="button" variant="secondary" before="phosphor-monitor-fill" data-theme-option="system">{{ __('System') }}</x-button>
             </div>
         </fieldset>
     </x-settings.layout>

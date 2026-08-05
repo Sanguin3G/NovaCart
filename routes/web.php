@@ -17,7 +17,7 @@ Route::middleware('guest')->group(function () {
     Route::get('register', [RegistrationController::class, 'create'])->name('register-form');
     Route::post('register', [RegistrationController::class, 'store'])->name('register-post');
 
-    Route::get('login', [LoginController::class, 'create'])->name('login-form');
+    Route::get('login', [LoginController::class, 'create'])->name('login.form');
     Route::post('login', [LoginController::class, 'store'])->middleware('login.throttle')->name('login-post');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])->name('password.request');
@@ -37,7 +37,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('dashboard', [DashboardController::class, 'index'])
-    ->middleware(['auth:admin,web', 'verified'])
+    ->middleware(['auth:admin'])
     ->name('dashboard');
 
 Route::middleware(['auth:admin,web'])->group(function () {
@@ -52,7 +52,7 @@ Route::middleware(['auth:admin,web'])->group(function () {
 });
 
 Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function () {
-    // Products CRUD and DataTables endpoints
+    // Products CRUD and HTMX table endpoint
     Route::get('products', [App\Http\Controllers\Admin\ProductController::class, 'index'])->name('products.index');
     Route::match(['get', 'post'], 'products/data', [App\Http\Controllers\Admin\ProductController::class, 'getData'])->name('products.data');
     Route::get('products/create', [App\Http\Controllers\Admin\ProductController::class, 'create'])->name('products.create');
@@ -61,6 +61,7 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
     Route::put('products/{product}', [App\Http\Controllers\Admin\ProductController::class, 'update'])->name('products.update');
     Route::delete('products/{product}', [App\Http\Controllers\Admin\ProductController::class, 'destroy'])->name('products.destroy');
     Route::patch('products/{product}/toggle-status', [App\Http\Controllers\Admin\ProductController::class, 'toggleStatus'])->name('products.toggleStatus');
+    Route::get('products/{product}/orders', [App\Http\Controllers\Admin\ProductOrderController::class, 'index'])->name('products.orders');
 
     /* Orders */
     Route::get('orders/{order}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('orders.show');
@@ -68,11 +69,11 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
     Route::patch('orders/{order}/status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('orders.status');
     // Cancel order via AJAX
     Route::post('orders/{order}/cancel', [App\Http\Controllers\Admin\OrderController::class, 'cancel'])->name('orders.cancel');
-    // Orders list (DataTable)
+    // Orders list
     Route::get('orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
     Route::match(['get', 'post'], 'orders/data', [App\Http\Controllers\Admin\OrderController::class, 'getData'])->name('orders.data');
 
-    // Categories CRUD and DataTables endpoints
+    // Categories CRUD and HTMX table endpoint
     Route::get('categories', [App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('categories.index');
     Route::match(['get', 'post'], 'categories/data', [App\Http\Controllers\Admin\CategoryController::class, 'getData'])->name('categories.data');
     Route::get('categories/create', [App\Http\Controllers\Admin\CategoryController::class, 'create'])->name('categories.create');

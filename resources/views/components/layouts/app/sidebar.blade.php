@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     @include('partials.head')
 </head>
@@ -9,12 +9,14 @@
         <x-phosphor-x aria-hidden="true" width="20" height="20"/>
     </x-sidebar.toggle>
 
-    @php($dashboardUrl = auth('admin')->check() ? route('dashboard') : route('customer.dashboard'))
+    @php($isAdmin = auth('admin')->check())
+    @php($currentUser = auth('admin')->user() ?? auth('web')->user())
+    @php($dashboardUrl = $isAdmin ? route('dashboard') : route('customer.dashboard'))
     <a href="{{ $dashboardUrl }}" class="mr-5 flex items-center space-x-2">
         <x-app-logo/>
     </a>
 
-    @auth
+    @if($currentUser)
         <x-navlist>
             <x-navlist.group :heading="__('Platform')">
                 <x-navlist.item before="phosphor-house-line" :href="$dashboardUrl"
@@ -23,9 +25,9 @@
                 </x-navlist.item>
             </x-navlist.group>
         </x-navlist>
-    @endauth
+    @endif
 
-    @guest
+    @if(!$currentUser)
         <x-navlist>
             <x-navlist.group :heading="__('Shop')">
                 <x-navlist.item before="heroicon-o-shopping-bag" :href="route('products.index')"
@@ -34,7 +36,7 @@
                 </x-navlist.item>
             </x-navlist.group>
         </x-navlist>
-    @endguest
+    @endif
 
     @auth('admin')
         <x-navlist>
@@ -59,8 +61,8 @@
         </x-navlist>
     @endauth
 
-    @auth
-        @unless(auth('admin')->check())
+    @if($currentUser)
+        @unless($isAdmin)
             <x-navlist>
                 <x-navlist.group :heading="__('Shop')">
                     <x-navlist.item before="heroicon-o-shopping-bag" :href="route('products.index')"
@@ -83,7 +85,7 @@
                 </x-navlist.group>
             </x-navlist>
         @endunless
-    @endauth
+    @endif
 
     <x-spacer/>
 
@@ -98,18 +100,18 @@
         </x-navlist.item>
     </x-navlist>
 
-    @auth
+    @if($currentUser)
         <x-popover align="bottom" justify="left">
             <button type="button"
                     class="w-full group flex items-center rounded-lg p-1 hover:bg-gray-800/5 dark:hover:bg-white/10">
                     <span class="shrink-0 size-8 bg-gray-200 rounded-sm overflow-hidden dark:bg-gray-700">
                         <span class="w-full h-full flex items-center justify-center text-sm">
-                            {{ auth()->user()->initials() }}
+                            {{ $currentUser->initials() }}
                         </span>
                     </span>
                 <span
                     class="ml-2 text-sm text-gray-500 dark:text-white/80 group-hover:text-gray-800 dark:group-hover:text-white font-medium truncate">
-                        {{ auth()->user()->name }}
+                        {{ $currentUser->name }}
                     </span>
                 <span class="shrink-0 ml-auto size-8 flex justify-center items-center">
                         <x-phosphor-caret-up-down aria-hidden="true" width="16" height="16"
@@ -121,13 +123,13 @@
                         <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
                             <span
                                 class="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-black dark:bg-gray-700 dark:text-white">
-                                {{ auth()->user()->initials() }}
+                                {{ $currentUser->initials() }}
                             </span>
                         </span>
 
                     <div class="grid flex-1 text-left text-sm leading-tight">
-                        <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                        <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                        <span class="truncate font-semibold">{{ $currentUser->name }}</span>
+                        <span class="truncate text-xs">{{ $currentUser->email }}</span>
                     </div>
                 </div>
                 <x-popover.separator/>
@@ -141,14 +143,14 @@
         </x-popover>
     @else
         <div class="px-4 py-2 flex flex-col gap-2">
-            <a href="{{ route('login-form') }}"
+            <a href="{{ route('login.form') }}"
                class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 w-full">{{ __('Log in') }}</a>
             @if(Route::has('register-form'))
                 <a href="{{ route('register-form') }}"
                    class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md text-orange-600 border border-orange-600 hover:bg-orange-50 dark:hover:bg-orange-900/20 w-full">{{ __('Register') }}</a>
             @endif
         </div>
-    @endauth
+    @endif
 </x-sidebar>
 
 <!-- Mobile User Menu -->
@@ -160,13 +162,13 @@
 
         <x-spacer/>
 
-        @auth
+        @if($currentUser)
             <x-popover align="top" justify="right">
                 <button type="button"
                         class="w-full group flex items-center rounded-lg p-1 hover:bg-gray-800/5 dark:hover:bg-white/10">
                             <span class="shrink-0 size-8 bg-gray-200 rounded-sm overflow-hidden dark:bg-gray-700">
                                 <span class="w-full h-full flex items-center justify-center text-sm">
-                                    {{ auth()->user()->initials() }}
+                                    {{ $currentUser->initials() }}
                                 </span>
                             </span>
                     <span class="shrink-0 ml-auto size-8 flex justify-center items-center">
@@ -179,12 +181,12 @@
                                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
                                     <span
                                         class="flex h-full w-full items-center justify-center rounded-lg bg-gray-200 text-black dark:bg-gray-700 dark:text-white">
-                                        {{ auth()->user()->initials() }}
+                                        {{ $currentUser->initials() }}
                                     </span>
                                 </span>
                         <div class="grid flex-1 text-left text-sm leading-tight">
-                            <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                            <span class="truncate text-xs">{{ auth()->user()->email }}</span>
+                            <span class="truncate font-semibold">{{ $currentUser->name }}</span>
+                            <span class="truncate text-xs">{{ $currentUser->email }}</span>
                         </div>
                     </div>
                     <x-popover.separator/>
@@ -198,11 +200,11 @@
             </x-popover>
         @else
             <div class="flex gap-3 ml-auto">
-                <a href="{{ route('login-form') }}" class="text-sm font-medium hover:underline">{{ __('Log in') }}</a>
+                <a href="{{ route('login.form') }}" class="text-sm font-medium hover:underline">{{ __('Log in') }}</a>
                 <a href="{{ route('register-form') }}"
                    class="inline-flex items-center px-4 py-1.5 rounded-md text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 shadow">{{ __('Register') }}</a>
             </div>
-        @endauth
+        @endif
     </x-container>
 </x-header>
 

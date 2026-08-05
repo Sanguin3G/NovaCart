@@ -25,17 +25,22 @@ class CategoryController extends Controller
         return view('admin.categories.index', compact('parentCategories'));
     }
 
-    /**
-     * Get categories data for DataTables.
-     * @throws Exception
-     */
-    public function getData(Request $request): JsonResponse
+    public function getData(Request $request): View
     {
-        // AJAX-only endpoint to prevent direct URL access
-        if ($request->ajax()) {
-            return (new Category())->getCategoryData($request);
+        $query = Category::with('parent')->withCount('products')->latest();
+        if ($request->filled('parent_filter') && $request->parent_filter !== 'all') {
+            $request->parent_filter === 'none'
+                ? $query->whereNull('parent_id')
+                : $query->where('parent_id', $request->parent_filter);
         }
-        abort(403, 'Direct access not allowed.');
+        if ($request->filled('status_filter') && $request->status_filter !== 'all') {
+            $query->where('is_active', $request->status_filter === 'active');
+        }
+        if ($search = $request->input('search')) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+        $categories = $query->paginate(10)->withQueryString();
+        return view('admin.categories.partials.table', compact('categories'));
     }
 
 
@@ -84,9 +89,11 @@ class CategoryController extends Controller
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'html' => view('admin.categories.partials.form', [
+                'html' => view('admin.categories.form', [
                     'category' => new Category(),
-                    'parentCategories' => $parentCategories
+                    'parentCategories' => $parentCategories,
+                    'action' => route('admin.categories.store'),
+                    'submitButtonText' => __('Create Category'),
                 ])->render()
             ]);
         }
@@ -107,10 +114,12 @@ class CategoryController extends Controller
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'html' => view('admin.categories.partials.form', [
+                'html' => view('admin.categories.form', [
                     'category' => $category,
                     'parentCategories' => $parentCategories,
-                    'isEdit' => true
+                    'isEdit' => true,
+                    'action' => route('admin.categories.update', $category),
+                    'submitButtonText' => __('Update Category'),
                 ])->render()
             ]);
         }

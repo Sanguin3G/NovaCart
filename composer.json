@@ -1,8 +1,8 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "imacrayon/blade-starter-kit",
+    "name": "novacart/store",
     "type": "project",
-    "description": "The unofficial Laravel starter kit for Blade.",
+    "description": "NovaCart, a lightweight Laravel commerce application.",
     "keywords": [
         "laravel",
         "framework",
@@ -11,13 +11,9 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
-        "blade-ui-kit/blade-heroicons": "^2.6",
-        "codeat3/blade-phosphor-icons": "^2.3",
         "laravel/framework": "^12.0",
-        "laravel/passport": "^13.0",
-        "laravel/tinker": "^2.10.1",
-        "secondnetwork/blade-tabler-icons": "^3.34",
-        "yajra/laravel-datatables-oracle": "^12.3"
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^2.10.1"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",

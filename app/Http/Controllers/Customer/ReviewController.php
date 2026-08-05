@@ -5,18 +5,15 @@ namespace App\Http\Controllers\Customer;
 use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductReview;
-use Exception;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
-use Yajra\DataTables\Facades\DataTables;
 
 class ReviewController extends Controller
 {
     public function index(): View
     {
-        return view('customer.reviews.index');
+        return view('customer.reviews.htmx-index');
     }
 
     // Data for products needing review
@@ -24,7 +21,7 @@ class ReviewController extends Controller
     /**
      * @throws Exception
      */
-    public function pendingData(Request $request): JsonResponse
+    public function pendingData(Request $request): View
     {
         $userId = Auth::id();
 
@@ -39,16 +36,12 @@ class ReviewController extends Controller
         })
             ->whereNotIn('id', $reviewed);
 
-        if ($search = $request->input('search_value')) {
+        if ($search = $request->input('search')) {
             $query->where('name', 'like', "%$search%");
         }
 
-        return DataTables::of($query)
-            ->addIndexColumn()
-            ->addColumn('image', fn($p) => '<img src="' . e($p->image_url) . '" class="h-12">')
-            ->addColumn('actions', fn($p) => '<button class="write-review-btn text-orange-600 hover:underline" data-product-id="' . $p->id . '" data-product-name="' . e($p->name) . '">' . __('Write Review') . '</button>')
-            ->rawColumns(['image', 'actions'])
-            ->make();
+        $products = $query->latest()->paginate(10)->withQueryString();
+        return view('partials.customer_pending_reviews_table', compact('products'));
     }
 
     // Data for user reviews
@@ -56,26 +49,20 @@ class ReviewController extends Controller
     /**
      * @throws Exception
      */
-    public function mineData(Request $request): JsonResponse
+    public function mineData(Request $request): View
     {
         $query = ProductReview::with('product')
             ->where('user_id', Auth::id())
             ->latest();
 
-        if ($search = $request->input('search_value')) {
+        if ($search = $request->input('search')) {
             $query->where(function ($q) use ($search) {
                 $q->where('body', 'like', "%$search%")
                     ->orWhereHas('product', fn($p) => $p->where('name', 'like', "%$search%"));
             });
         }
 
-        return DataTables::of($query)
-            ->addIndexColumn()
-            ->addColumn('image', fn($r) => '<img src="' . e($r->product->image_url) . '" class="h-12">')
-            ->addColumn('product', fn($r) => e($r->product->name))
-            ->editColumn('rating', fn($r) => str_repeat('★', $r->rating))
-            ->addColumn('actions', fn($r) => '<button class="edit-review-btn text-blue-600 hover:underline" data-review-id="' . $r->id . '" data-product-id="' . $r->product_id . '" data-rating="' . $r->rating . '" data-body="' . e($r->body) . '" data-product-name="' . e($r->product->name) . '">' . __('Edit') . '</button>')
-            ->rawColumns(['image', 'rating', 'actions'])
-            ->make();
+        $reviews = $query->paginate(10)->withQueryString();
+        return view('partials.customer_mine_reviews_table', compact('reviews'));
     }
 }
