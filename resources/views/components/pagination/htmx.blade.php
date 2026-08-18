@@ -1,18 +1,18 @@
 @props(['paginator', 'target'])
 
 @if ($paginator->hasPages())
-    <nav class="mt-4 flex items-center justify-between text-sm" aria-label="{{ __('Pagination') }}">
-        <span class="text-zinc-500 dark:text-zinc-400">{{ __('Showing :from–:to of :total', ['from' => $paginator->firstItem(), 'to' => $paginator->lastItem(), 'total' => $paginator->total()]) }}</span>
+    <nav class="mt-4 flex flex-col gap-3 border-t border-gray-200 pt-4 text-sm sm:flex-row sm:items-center sm:justify-between dark:border-gray-700" aria-label="Pagination navigation">
+        <span class="text-gray-500 dark:text-gray-400">{{ __('Showing :from–:to of :total', ['from' => $paginator->firstItem(), 'to' => $paginator->lastItem(), 'total' => $paginator->total()]) }}</span>
         <div class="flex gap-2">
             @if ($paginator->onFirstPage())
-                <span class="rounded border border-zinc-200 px-3 py-1 text-zinc-400 dark:border-zinc-700">{{ __('Previous') }}</span>
+                <span class="nc-btn-secondary pointer-events-none opacity-50">{{ __('Previous') }}</span>
             @else
-                <a href="{{ $paginator->previousPageUrl() }}" hx-get="{{ $paginator->previousPageUrl() }}" hx-target="{{ $target }}" hx-swap="innerHTML" hx-push-url="true" class="rounded border border-zinc-200 px-3 py-1 dark:border-zinc-700">{{ __('Previous') }}</a>
+                <a href="{{ $paginator->previousPageUrl() }}" hx-get="{{ $paginator->previousPageUrl() }}" hx-target="{{ $target }}" hx-swap="innerHTML" hx-push-url="true" class="nc-btn-secondary">{{ __('Previous') }}</a>
             @endif
             @if ($paginator->hasMorePages())
-                <a href="{{ $paginator->nextPageUrl() }}" hx-get="{{ $paginator->nextPageUrl() }}" hx-target="{{ $target }}" hx-swap="innerHTML" hx-push-url="true" class="rounded border border-zinc-200 px-3 py-1 dark:border-zinc-700">{{ __('Next') }}</a>
+                <a href="{{ $paginator->nextPageUrl() }}" hx-get="{{ $paginator->nextPageUrl() }}" hx-target="{{ $target }}" hx-swap="innerHTML" hx-push-url="true" class="nc-btn-secondary">{{ __('Next') }}</a>
             @else
-                <span class="rounded border border-zinc-200 px-3 py-1 text-zinc-400 dark:border-zinc-700">{{ __('Next') }}</span>
+                <span class="nc-btn-secondary pointer-events-none opacity-50">{{ __('Next') }}</span>
             @endif
         </div>
     </nav>

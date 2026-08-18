@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             cart.forEach(item => {
                 const itemHtml = `
-                    <div class="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700" data-id="${item.id}">
+                    <div class="flex flex-col gap-4 border-b border-gray-200 p-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between dark:border-gray-700" data-id="${item.id}">
                         <div class="flex items-center gap-4">
                             <img src="${item.image || 'https://via.placeholder.com/150'}" alt="${item.name}" class="w-16 h-16 object-cover rounded">
                             <div>
@@ -47,13 +47,13 @@ document.addEventListener('DOMContentLoaded', function () {
                             </div>
                         </div>
                         <div class="flex items-center gap-4">
-                            <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-md overflow-hidden">
-                                <button type="button" class="quantity-change px-2 py-1" data-change="-1" data-id="${item.id}">-</button>
-                                <input type="text" value="${item.quantity}" class="w-10 text-center bg-transparent border-0" readonly>
-                                <button type="button" class="quantity-change px-2 py-1" data-change="1" data-id="${item.id}">+</button>
+                            <div class="flex h-10 items-center overflow-hidden rounded-xl border border-gray-300 dark:border-gray-600">
+                                <button type="button" aria-label="Decrease quantity" class="quantity-change h-full w-10 text-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800" data-change="-1" data-id="${item.id}">−</button>
+                                <input type="text" value="${item.quantity}" class="h-full w-10 border-x border-gray-200 bg-transparent text-center text-sm dark:border-gray-700" readonly>
+                                <button type="button" aria-label="Increase quantity" class="quantity-change h-full w-10 text-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800" data-change="1" data-id="${item.id}">+</button>
                             </div>
                             <p class="font-semibold text-gray-800 dark:text-gray-200 w-24 text-right">$${(item.price * item.quantity).toFixed(2)}</p>
-                            <button type="button" class="remove-item cart-remove bg-red-500 hover:bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center" data-id="${item.id}">&times;</button>
+                            <button type="button" aria-label="Remove ${item.name}" class="remove-item cart-remove inline-flex h-10 w-10 items-center justify-center rounded-xl border border-red-200 text-red-600 hover:bg-red-50 dark:border-red-900/60 dark:hover:bg-red-950/40" data-id="${item.id}">&times;</button>
                         </div>
                     </div>
                 `;

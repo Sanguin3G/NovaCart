@@ -19,6 +19,7 @@ export default defineConfig({
                 'resources/js/customer/order-show.js',
                 'resources/js/admin/order-actions.js',
                 'resources/js/admin/order-show.js',
+                'resources/js/customer/reviews-page-htmx.js',
             ],
             refresh: [`resources/views/**/*`],
         }),

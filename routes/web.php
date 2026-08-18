@@ -64,15 +64,13 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
     Route::get('products/{product}/orders', [App\Http\Controllers\Admin\ProductOrderController::class, 'index'])->name('products.orders');
 
     /* Orders */
+    Route::get('orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
+    Route::match(['get', 'post'], 'orders/data', [App\Http\Controllers\Admin\OrderController::class, 'getData'])->name('orders.data');
     Route::get('orders/{order}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('orders.show');
     // Update status
     Route::patch('orders/{order}/status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('orders.status');
     // Cancel order via AJAX
     Route::post('orders/{order}/cancel', [App\Http\Controllers\Admin\OrderController::class, 'cancel'])->name('orders.cancel');
-    // Orders list
-    Route::get('orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
-    Route::match(['get', 'post'], 'orders/data', [App\Http\Controllers\Admin\OrderController::class, 'getData'])->name('orders.data');
-
     // Categories CRUD and HTMX table endpoint
     Route::get('categories', [App\Http\Controllers\Admin\CategoryController::class, 'index'])->name('categories.index');
     Route::match(['get', 'post'], 'categories/data', [App\Http\Controllers\Admin\CategoryController::class, 'getData'])->name('categories.data');
@@ -84,10 +82,17 @@ Route::middleware('auth:admin')->prefix('admin')->name('admin.')->group(function
     Route::patch('categories/{category}/toggle-status', [App\Http\Controllers\Admin\CategoryController::class, 'toggleStatus'])->name('categories.toggleStatus');
 
     // Product reviews
-    Route::match(['get', 'post'], 'reviews/data', [App\Http\Controllers\Admin\ProductReviewController::class, 'data'])->name('reviews.data');
     Route::get('reviews', [App\Http\Controllers\Admin\ProductReviewController::class, 'index'])->name('reviews.index');
+    Route::match(['get', 'post'], 'reviews/data', [App\Http\Controllers\Admin\ProductReviewController::class, 'data'])->name('reviews.data');
     Route::get('reviews/{review}', [App\Http\Controllers\Admin\ProductReviewController::class, 'show'])->name('reviews.show');
     Route::patch('reviews/{review}/disable', [App\Http\Controllers\Admin\ProductReviewController::class, 'disable'])->name('reviews.disable');
+
+    // Customer account management
+    Route::get('users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('users/data', [App\Http\Controllers\Admin\UserController::class, 'data'])->name('users.data');
+    Route::get('users/{user}/edit', [App\Http\Controllers\Admin\UserController::class, 'edit'])->name('users.edit');
+    Route::put('users/{user}', [App\Http\Controllers\Admin\UserController::class, 'update'])->name('users.update');
+    Route::patch('users/{user}/toggle-status', [App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])->name('users.toggleStatus');
 });
 
 Route::post('logout', [LoginController::class, 'destroy'])->name('logout');
@@ -126,8 +131,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::prefix('orders')->name('orders.')->group(function () {
         Route::get('/', [App\Http\Controllers\Customer\OrderController::class, 'index'])->name('index');
-        Route::get('/{order}', [App\Http\Controllers\Customer\OrderController::class, 'show'])->name('show');
         Route::match(['get', 'post'], 'data', [App\Http\Controllers\Customer\OrderController::class, 'getData'])->name('data');
+        Route::get('/{order}', [App\Http\Controllers\Customer\OrderController::class, 'show'])->name('show');
 
         // Cancel a pending order
         Route::post('/{order}/cancel', [App\Http\Controllers\Customer\OrderController::class, 'cancel'])->name('cancel');
@@ -140,7 +145,6 @@ Route::middleware(['auth'])->group(function () {
 
 Route::post('products/{product}/reviews', [App\Http\Controllers\ProductReviewController::class, 'store'])->name('products.reviews.store');
 Route::middleware('auth')->group(function () {
-    Route::get('my/reviews/todo', [App\Http\Controllers\ProductReviewController::class, 'todo'])->name('reviews.todo');
     Route::get('my/reviews', [App\Http\Controllers\Customer\ReviewController::class, 'index'])->name('reviews.index');
     Route::get('my/reviews/pending/data', [App\Http\Controllers\Customer\ReviewController::class, 'pendingData'])->name('reviews.pending');
     Route::get('my/reviews/mine/data', [App\Http\Controllers\Customer\ReviewController::class, 'mineData'])->name('reviews.mine');

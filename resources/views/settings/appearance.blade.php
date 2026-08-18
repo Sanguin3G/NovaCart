@@ -1,16 +1,6 @@
 <x-layouts.app :title="__('Appearance | Settings')">
-<div class="flex flex-col items-start">
-    @include('partials.settings-heading')
-
-    <x-settings.layout :heading="__('Appearance')" :subheading=" __('Update the appearance settings for your account')">
-        <fieldset>
-            <legend class="sr-only">Appearance</legend>
-            <div class="inline-flex space-x-2">
-                <x-button type="button" variant="secondary" before="phosphor-sun-fill" data-theme-option="light">{{ __('Light') }}</x-button>
-                <x-button type="button" variant="secondary" before="phosphor-moon-fill" data-theme-option="dark">{{ __('Dark') }}</x-button>
-                <x-button type="button" variant="secondary" before="phosphor-monitor-fill" data-theme-option="system">{{ __('System') }}</x-button>
-            </div>
-        </fieldset>
-    </x-settings.layout>
-</div>
+    <div class="nc-page">
+        <header class="nc-page-header"><div><p class="nc-eyebrow">{{ __('Settings') }}</p><h1 class="nc-title">{{ __('Appearance') }}</h1><p class="nc-subtitle">{{ __('Choose how NovaCart should look on this device.') }}</p></div></header>
+        <section class="nc-card max-w-3xl"><div class="nc-card-header"><h2 class="font-semibold text-gray-950 dark:text-white">{{ __('Theme preference') }}</h2><p class="mt-1 text-sm text-gray-500 dark:text-gray-400">{{ __('Your choice is saved locally and can follow the system setting.') }}</p></div><div class="nc-card-body"><fieldset><legend class="sr-only">{{ __('Theme preference') }}</legend><div class="grid gap-3 sm:grid-cols-3"><button type="button" data-theme-option="light" class="nc-btn-secondary h-16 flex-col"><x-icon name="sun" width="20" height="20" /><span>{{ __('Light') }}</span></button><button type="button" data-theme-option="dark" class="nc-btn-secondary h-16 flex-col"><x-icon name="moon" width="20" height="20" /><span>{{ __('Dark') }}</span></button><button type="button" data-theme-option="system" class="nc-btn-secondary h-16 flex-col"><x-icon name="monitor" width="20" height="20" /><span>{{ __('System') }}</span></button></div></fieldset></div></section>
+    </div>
 </x-layouts.app>

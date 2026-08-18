@@ -7,10 +7,5 @@
             $submitButtonText = __('Update Category');
     @endphp
 
-    @include('admin.categories.form', [
-        'action' => $action,
-        'submitButtonText' => $submitButtonText,
-        'category' => $category,
-        'parentCategories' => $parentCategories,
-    ])
+    <div class="nc-page"><header class="nc-page-header"><div><p class="nc-eyebrow">{{ __('Admin management') }}</p><h1 class="nc-title">{{ __('Edit category') }}</h1><p class="nc-subtitle">{{ __('Keep this catalogue group accurate and easy to understand.') }}</p></div><a href="{{ route('admin.categories.index') }}" class="nc-btn-secondary"><x-icon name="chevron-left" width="16" height="16" />{{ __('Back to categories') }}</a></header><section class="nc-card"><div class="nc-card-body max-w-3xl">@include('admin.categories.form', ['action' => $action, 'submitButtonText' => $submitButtonText, 'category' => $category, 'parentCategories' => $parentCategories])</div></section></div>
 </x-layouts.app>

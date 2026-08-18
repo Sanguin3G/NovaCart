@@ -1,14 +1,11 @@
 @props(['id','closable'=>true])
 
-{{-- Overlay container hidden by default --}}
-<div id="{{ $id }}" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
-    {{-- Modal box --}}
-    <div class="relative w-full max-w-[95vw] max-h-[90vh] overflow-auto bg-white dark:bg-gray-800 rounded-lg shadow-xl">
+<div id="{{ $id }}" class="nc-modal" role="dialog" aria-modal="true" aria-labelledby="{{ $id }}-title">
+    <div class="nc-modal-panel relative">
         {{ $slot }}
         @if($closable)
-            <button type="button" class="absolute top-2 right-2 text-gray-400 hover:text-gray-700"
-                    onclick="this.closest('[id={{ $id }}]').classList.add('hidden')">
-                <x-phosphor-x width="20" height="20"/>
+            <button type="button" data-modal-close class="absolute right-3 top-3 z-10 rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-800 dark:hover:text-white" aria-label="{{ __('Close modal') }}">
+                <x-icon name="close" width="18" height="18"/>
                 <span class="sr-only">{{ __('Close modal') }}</span>
             </button>
         @endif

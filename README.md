@@ -1,103 +1,70 @@
 # NovaCart
 
-This is a practice project built with Laravel, demonstrating a simple e-commerce application. It includes features for both customers and administrators, such as product browsing, a shopping cart, an admin dashboard for managing products and orders, and a complete user authentication system.
+NovaCart is a small Laravel 12 store built as a first Laravel practice project. It demonstrates a complete Blade-based shopping flow with a customer area, an admin area, seeded demo data, and progressively enhanced interactions that remain usable as ordinary HTML.
 
-## Key Features
+## What is included
 
-### Customer-Facing
+Customer features include product browsing, search and filtering, cart and checkout, order history, cancellation of pending orders, profile/password settings, light/dark/system appearance, and product reviews.
 
-- **Product Catalog**: Browse and view products with details and images.
-- **User Authentication**: Secure registration, login, and password reset functionality.
-- **Shopping Cart**: Add, update, and remove products from the cart.
-- **Checkout Process**: A simple workflow for placing orders.
-- **Customer Dashboard**: View order history and manage personal reviews.
-- **Product Reviews**: Submit, edit, and view reviews for products.
+The admin area at `/dashboard` includes dashboard metrics, product and category CRUD, order status management, review moderation with an integrated modal, and customer account management with suspend/restore controls.
 
-### Admin Panel (`/admin`)
+![NovaCart customer dashboard](docs/screenshots/customer-dashboard-light.png)
 
-- **Dashboard**: An overview of site activity.
-- **Product Management**: Full CRUD (Create, Read, Update, Delete) functionality for products, managed with Blade and HTMX.
-- **Category Management**: Full CRUD functionality for product categories.
-- **Order Management**: View order details, update statuses, and cancel orders.
-- **Review Management**: View and moderate customer-submitted reviews.
+![NovaCart admin products](docs/screenshots/admin-products-light.png)
 
-## Technology Stack
+![NovaCart review moderation modal](docs/screenshots/admin-review-modal-light.png)
 
-- **Backend**: 
-  - PHP 8.3
-  - Laravel 12
-  - Laravel Sanctum (for API authentication)
+## Stack
 
-- **Frontend**:
-  - Blade Templates
-  - Tailwind CSS 4
-  - Vite
-  - Ky for small, consistent JSON requests
-  - Chart.js
-  - HTMX for lightweight HTML interactions
-  - Native browser dialogs and local SVG icons
+- PHP 8.3+ and Laravel 12
+- Blade, Tailwind CSS 4, Vite, and Chart.js
+- HTMX for server-rendered partial updates
+- Ky for small JSON requests; no jQuery or DataTables
+- Laravel Sanctum for API token authentication
+- Lightweight local SVG icons rendered through one Blade component
+- SQLite by default for local development; MySQL is also supported
 
-## Installation and Setup
+The frontend intentionally keeps JavaScript small: HTMX handles HTML updates, Ky handles JSON mutations, and Alpine is not required for the main store flows. Small vanilla modules cover modals, popovers, theme selection, toasts, and form helpers.
 
-Follow these steps to get the project up and running on your local machine.
+## Local setup
 
-1.  **Clone the repository**:
-    ```bash
-    git clone <your-repository-url>
-      cd novacart
-    ```
-
-2.  **Install dependencies**:
-    ```bash
-    composer install
-    npm install
-    ```
-
-3.  **Environment Configuration**:
-    - Copy the example environment file:
-      ```bash
-      cp .env.example .env
-      ```
-    - Generate a new application key:
-      ```bash
-      php artisan key:generate
-      ```
-
-4.  **Database Setup**:
-    - The default `.env.example` uses SQLite and file-based local drivers, so no MySQL/Redis service is required for development.
-    - If you use MySQL, update the `DB_*` values in `.env` before migrating.
-    - Run the database migrations and seeders to create the necessary tables:
-      ```bash
-      php artisan migrate --seed
-      ```
-    - Create an administrator explicitly with Tinker (the app never ships with a default password):
-      ```bash
-      php artisan tinker
-      >>> App\\Models\\Admin::create(['name' => 'Admin', 'email' => 'admin@example.com', 'password' => Hash::make('change-this'), 'role' => 'admin']);
-      ```
-
-5.  **API authentication**:
-    - Sanctum tokens are created by the /api/login endpoint. Send the returned bearer token to /api/me and /api/logout.
-      ```bash
-      php artisan passport:install
-      ```
-
-6.  **Public files**:
-    ```bash
-    php artisan storage:link
-    ```
-
-## Running the Application
-
-This project includes a convenient script to start all necessary development services concurrently.
+From the project directory (the local folder is now named `NovaCart`):
 
 ```bash
-composer run dev
+composer install
+npm install
+copy .env.example .env       # Windows PowerShell: Copy-Item .env.example .env
+php artisan key:generate
+php artisan migrate:fresh --seed
+npm run build
+php artisan serve
 ```
 
-This command will:
-- Start the PHP development server (`php artisan serve`).
-- Start the queue listener (`php artisan queue:listen`).
-- Compile frontend assets with Vite in watch mode (`npm run dev`).
+Open <http://127.0.0.1:8000>. For active frontend development, use `npm run dev` in a second terminal. The seeded demo database is SQLite and contains categories, products, customers, orders, and reviews so every main screen has useful content immediately.
 
-The application will be available at `http://127.0.0.1:8000`.
+### Demo accounts
+
+| Area | Email | Password |
+| --- | --- | --- |
+| Admin | `admin@novacart.test` | `password` |
+| Customer | `demo@novacart.test` | `password` |
+| Customer | `maya@novacart.test` | `password` |
+| Customer | `alex@novacart.test` | `password` |
+
+Never use these credentials outside local development.
+
+## Tests and quality checks
+
+```bash
+php artisan test --compact
+npm run build
+```
+
+The GitHub Actions workflow runs Composer installation, `npm ci`, the production Vite build, SQLite migrations, and the Laravel test suite.
+
+## Project notes
+
+- `database/seeders/DemoDataSeeder.php` is the single source of the local showcase data.
+- `docs/REPORT.md` records the modernization audit, fixes, and verification results.
+- `docs/screenshots/` contains screenshots captured from the running local application.
+- The original repository is [Sanguine3/NovaCart](https://github.com/Sanguine3/NovaCart).

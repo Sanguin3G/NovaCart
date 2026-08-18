@@ -37,6 +37,45 @@
     .btn[data-loading] { @apply pointer-events-none cursor-wait bg-indigo-400; }
     .btn[data-loading] .button-content { @apply opacity-0 max-h-0 overflow-hidden; }
     .btn[data-loading] .loading-indicator { @apply opacity-100 w-auto h-auto; }
+
+    .nc-page { @apply mx-auto w-full max-w-[1440px] space-y-6; }
+    .nc-page-header { @apply flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between; }
+    .nc-eyebrow { @apply text-xs font-semibold uppercase tracking-[0.16em] text-gray-500 dark:text-gray-400; }
+    .nc-title { @apply text-2xl font-semibold tracking-tight text-gray-950 dark:text-white; }
+    .nc-subtitle { @apply max-w-2xl text-sm text-gray-500 dark:text-gray-400; }
+    .nc-card { @apply rounded-2xl border border-gray-200/80 bg-white shadow-sm dark:border-gray-700/80 dark:bg-gray-900; }
+    .nc-card-header { @apply border-b border-gray-200/80 px-5 py-4 dark:border-gray-700/80; }
+    .nc-card-body { @apply p-5; }
+    .nc-toolbar { @apply flex flex-col gap-3 rounded-2xl border border-gray-200/80 bg-white p-3 shadow-sm sm:flex-row sm:items-center dark:border-gray-700/80 dark:bg-gray-900; }
+    .nc-toolbar-group { @apply flex flex-1 flex-col gap-3 sm:flex-row sm:items-center; }
+    .nc-control { @apply h-10 w-full rounded-xl border border-gray-300 bg-white px-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100; }
+    .nc-select { @apply h-10 min-w-40 w-full cursor-pointer rounded-xl border border-gray-300 bg-white px-3 pr-9 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100; }
+    .nc-search { @apply h-10 w-full rounded-xl border border-gray-300 bg-white px-3 pl-10 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-gray-700 dark:bg-gray-950 dark:text-gray-100; }
+    .nc-btn { @apply inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-orange-500/30 disabled:cursor-not-allowed disabled:opacity-60; }
+    .nc-btn-primary { @apply inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-orange-500 px-4 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500/30 disabled:cursor-not-allowed disabled:opacity-60; }
+    .nc-btn-secondary { @apply inline-flex h-10 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60; }
+    .nc-btn-secondary[aria-pressed="true"] { @apply border-orange-500 bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300; }
+    .nc-btn-ghost { @apply inline-flex h-10 items-center justify-center gap-2 rounded-xl px-3 text-sm font-semibold text-gray-600 transition hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500/30 dark:text-gray-300 dark:hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-60; }
+    .nc-btn-danger { @apply inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-red-600 px-4 text-sm font-semibold text-white transition hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-orange-500/30 disabled:cursor-not-allowed disabled:opacity-60; }
+    .nc-btn-link { @apply inline-flex items-center gap-1 text-sm font-semibold text-orange-600 hover:text-orange-700 hover:underline dark:text-orange-400; }
+    .nc-table-wrap { @apply overflow-x-auto; }
+    .nc-table { @apply min-w-full divide-y divide-gray-200 text-left text-sm dark:divide-gray-700; }
+    .nc-table thead { @apply bg-gray-50/80 dark:bg-gray-950/50; }
+    .nc-table th { @apply whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400; }
+    .nc-table td { @apply border-t border-gray-100 px-4 py-3 align-middle text-gray-700 dark:border-gray-800 dark:text-gray-300; }
+    .nc-table tbody tr { @apply transition hover:bg-orange-50/40 dark:hover:bg-gray-800/60; }
+    .nc-table-empty { @apply px-4 py-12 text-center text-sm text-gray-500 dark:text-gray-400; }
+    .nc-badge { @apply inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold; }
+    .nc-badge-success { @apply inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1 text-xs font-semibold text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300; }
+    .nc-badge-warning { @apply inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700 dark:bg-amber-950/60 dark:text-amber-300; }
+    .nc-badge-danger { @apply inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700 dark:bg-red-950/60 dark:text-red-300; }
+    .nc-badge-neutral { @apply inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-700 dark:bg-gray-800 dark:text-gray-300; }
+    .nc-state { @apply flex min-h-40 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-gray-300 p-8 text-center dark:border-gray-700; }
+    .nc-state-title { @apply font-semibold text-gray-900 dark:text-white; }
+    .nc-state-copy { @apply text-sm text-gray-500 dark:text-gray-400; }
+    .nc-modal { @apply fixed inset-0 z-50 hidden items-center justify-center bg-gray-950/60 p-4 backdrop-blur-sm; }
+    .nc-modal.is-open { @apply flex; }
+    .nc-modal-panel { @apply max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-gray-700 dark:bg-gray-900; }
 }
 
 .pagination-link.disabled { cursor: not-allowed; opacity: .5; pointer-events: none; }

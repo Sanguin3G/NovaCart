@@ -3,8 +3,8 @@
 <head>
     @include('partials.head')
 </head>
-<body class="layout sidebar min-h-screen bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-<x-sidebar sticky stashable class="border-r border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-900">
+<body class="layout sidebar min-h-screen bg-gray-50 text-gray-700 dark:bg-gray-950 dark:text-gray-300">
+<x-sidebar sticky stashable class="border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
     <x-sidebar.toggle class="lg:hidden w-10 p-0">
         <x-phosphor-x aria-hidden="true" width="20" height="20"/>
     </x-sidebar.toggle>
@@ -19,7 +19,7 @@
     @if($currentUser)
         <x-navlist>
             <x-navlist.group :heading="__('Platform')">
-                <x-navlist.item before="phosphor-house-line" :href="$dashboardUrl"
+                <x-navlist.item before="house" :href="$dashboardUrl"
                                 :current="auth('admin')->check() ? request()->routeIs('dashboard') : request()->routeIs('customer.dashboard')">
                     {{ __('Dashboard') }}
                 </x-navlist.item>
@@ -57,6 +57,10 @@
                                 :current="request()->routeIs('admin.reviews.*')">
                     {{ __('Reviews') }}
                 </x-navlist.item>
+                <x-navlist.item before="user" :href="route('admin.users.index')"
+                                :current="request()->routeIs('admin.users.*')">
+                    {{ __('Customers') }}
+                </x-navlist.item>
             </x-navlist.group>
         </x-navlist>
     @endauth
@@ -90,12 +94,12 @@
     <x-spacer/>
 
     <x-navlist>
-        <x-navlist.item before="phosphor-git-pull-request" href="https://www.youtube.com/watch?v=xvFZjo5PgG0"
+        <x-navlist.item before="repository" href="https://github.com/Sanguine3/NovaCart"
                         target="_blank">
             {{ __('Repository') }}
         </x-navlist.item>
 
-        <x-navlist.item before="phosphor-book-open-text" href="https://laravel.com/docs/starter-kits" target="_blank">
+        <x-navlist.item before="documentation" href="https://laravel.com/docs/12.x" target="_blank">
             {{ __('Documentation') }}
         </x-navlist.item>
     </x-navlist>
@@ -133,11 +137,11 @@
                     </div>
                 </div>
                 <x-popover.separator/>
-                <x-popover.item before="phosphor-gear-fine"
+                <x-popover.item before="settings"
                                 href="/settings/profile">{{ __('Settings') }}</x-popover.item>
                 <x-popover.separator/>
                 <x-form method="post" action="{{ route('logout') }}" class="w-full flex">
-                    <x-popover.item before="phosphor-sign-out">{{ __('Log Out') }}</x-popover.item>
+                    <x-popover.item before="logout">{{ __('Log Out') }}</x-popover.item>
                 </x-form>
             </x-slot:menu>
         </x-popover>
@@ -190,11 +194,11 @@
                         </div>
                     </div>
                     <x-popover.separator/>
-                    <x-popover.item before="phosphor-gear-fine"
+                    <x-popover.item before="settings"
                                     href="/settings/profile">{{ __('Settings') }}</x-popover.item>
                     <x-popover.separator/>
                     <x-form method="post" action="{{ route('logout') }}" class="w-full flex">
-                        <x-popover.item before="phosphor-sign-out">{{ __('Log Out') }}</x-popover.item>
+                        <x-popover.item before="logout">{{ __('Log Out') }}</x-popover.item>
                     </x-form>
                 </x-slot:menu>
             </x-popover>
