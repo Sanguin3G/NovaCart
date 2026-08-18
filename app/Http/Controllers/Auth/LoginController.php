@@ -31,7 +31,7 @@ class LoginController extends Controller
             return redirect()->intended(route('dashboard'));
         }
 
-        if (Auth::guard('web')->attempt($credentials, $remember)) {
+        if (Auth::guard('web')->attempt([...$credentials, 'is_active' => true], $remember)) {
             $request->session()->regenerate();
             return redirect()->intended(route('customer.dashboard'));
         }

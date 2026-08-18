@@ -23,8 +23,7 @@ document.addEventListener('click', (event) => {
     const reviewButton = event.target.closest('.write-review-btn, .edit-review-btn');
     if (reviewButton) {
         const modal = document.getElementById('review-modal');
-        modal?.classList.remove('hidden');
-        modal?.classList.add('flex');
+        modal?.classList.add('is-open');
         document.getElementById('review-modal-title').textContent = reviewButton.dataset.productName || '';
         document.getElementById('product-id-hidden').value = reviewButton.dataset.productId;
         document.getElementById('review-body').value = reviewButton.dataset.body || '';
@@ -63,7 +62,7 @@ document.getElementById('review-form')?.addEventListener('submit', async (event)
     try {
         await api.post('/products/' + productId + '/reviews', new FormData(event.currentTarget));
         Toast.success('Review saved.');
-        document.getElementById('review-modal').classList.add('hidden');
+        document.getElementById('review-modal').classList.remove('is-open');
         reload('#pending-table', '/my/reviews/pending/data');
         reload('#mine-table', '/my/reviews/mine/data');
     } catch (error) {

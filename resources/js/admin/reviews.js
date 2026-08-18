@@ -1,50 +1,34 @@
-const $ = window.jQuery;
+import { api } from '../utils/api.js';
+import { Toast } from '../utils/toast.js';
 
-$(function () {
-    const table = $('#reviews-table').DataTable({
-        dom: 'lrtip',
-        processing: true,
-        serverSide: true,
-        ajax: {
-            url: '/admin/reviews/data',
-            type: 'POST',
-            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            data: function (d) {
-                d.status_filter = $('#status-filter').val();
-            }
-        },
-        columns: [
-            {data: 'DT_RowIndex', orderable: false, searchable: false},
-            {data: 'product', name: 'product.name'},
-            {data: 'reviewer', name: 'reviewer_name'},
-            {data: 'rating', name: 'rating', orderable: false, searchable: false},
-            {data: 'status', name: 'status'},
-            {data: 'created_at', name: 'created_at'},
-            {data: 'actions', name: 'actions', orderable: false, searchable: false},
-        ],
-    });
+const refresh = () => {
+    const target = document.getElementById('reviews-table');
+    if (target && window.htmx) window.htmx.trigger(target, 'load');
+};
 
-    $('#status-filter').change(() => table.draw());
-    $('#search-input').on('keyup', function () {
-        table.search($(this).val()).draw();
-    });
+document.addEventListener('click', async (event) => {
+    const detail = event.target.closest('.js-review-detail');
+    if (detail) {
+        const modal = document.getElementById('review-detail-modal');
+        const content = document.getElementById('review-detail-content');
+        if (!modal || !content) return;
 
-    // Detail modal
-    $(document).on('click', '.view-btn', function () {
-        const url = $(this).data('url');
-        if (!url) return;
+        modal.classList.add('is-open');
+        content.innerHTML = '<div class="nc-state"><span class="animate-pulse text-sm text-gray-500">Loading review…</span></div>';
+        if (window.htmx) await window.htmx.ajax('GET', detail.dataset.url, {target: '#review-detail-content', swap: 'innerHTML'});
+        return;
+    }
 
-        $('#review-detail-modal').load(url, () => {
-            const dialog = document.getElementById('review-detail-modal');
-            if (dialog && typeof dialog.showModal === 'function') {
-                dialog.showModal();
-            }
-        });
-    });
+    const toggle = event.target.closest('.js-review-toggle');
+    if (!toggle || toggle.disabled) return;
 
-    // Redraw table after status toggle completes (listen for custom loading-end which fires after api util)
-    window.addEventListener('loading-end', () => {
-        // Short debounce to ensure backend has processed
-        setTimeout(() => table.draw(false), 200);
-    });
+    toggle.disabled = true;
+    try {
+        const response = await api.patch(toggle.dataset.url);
+        Toast.success(response.message || 'Review status updated.');
+        refresh();
+    } catch (error) {
+        Toast.error(error.message || 'Could not update the review.');
+        toggle.disabled = false;
+    }
 });

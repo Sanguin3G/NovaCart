@@ -5,38 +5,33 @@
         @method('PUT')
     @endif
 
-    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-    @if($product->exists)
-        <input type="hidden" name="_method" value="PUT">
-    @endif
-
     <!-- Name -->
     <div>
-        <label for="name" class="block text-sm font-medium">{{ __('Name') }}</label>
-        <input type="text" name="name" id="name" class="mt-1 block w-full border rounded px-2 py-1"
+        <label for="name" class="mb-2 block text-sm font-semibold">{{ __('Name') }}</label>
+        <input type="text" name="name" id="name" class="nc-control"
                value="{{ old('name', $product->name) }}" />
         @error('name') <p class="mt-1 text-red-600 text-sm">{{ $message }}</p> @enderror
     </div>
 
     <!-- Description -->
     <div>
-        <label for="description" class="block text-sm font-medium">{{ __('Description') }}</label>
+        <label for="description" class="mb-2 block text-sm font-semibold">{{ __('Description') }}</label>
         <textarea name="description" id="description" rows="4"
-                  class="mt-1 block w-full border rounded px-2 py-1">{{ old('description', $product->description) }}</textarea>
+                  class="nc-control min-h-28 py-3">{{ old('description', $product->description) }}</textarea>
         @error('description') <p class="mt-1 text-red-600 text-sm">{{ $message }}</p> @enderror
     </div>
 
     <!-- Price & Stock -->
     <div class="grid grid-cols-2 gap-4">
         <div>
-            <label for="price" class="block text-sm font-medium">{{ __('Price') }}</label>
-            <input type="number" step="0.01" name="price" id="price" class="mt-1 block w-full border rounded px-2 py-1"
+            <label for="price" class="mb-2 block text-sm font-semibold">{{ __('Price') }}</label>
+            <input type="number" step="0.01" name="price" id="price" class="nc-control"
                    value="{{ old('price', $product->price) }}" />
             @error('price') <p class="mt-1 text-red-600 text-sm">{{ $message }}</p> @enderror
         </div>
         <div>
-            <label for="stock" class="block text-sm font-medium">{{ __('Stock') }}</label>
-            <input type="number" name="stock" id="stock" class="mt-1 block w-full border rounded px-2 py-1"
+            <label for="stock" class="mb-2 block text-sm font-semibold">{{ __('Stock') }}</label>
+            <input type="number" name="stock" id="stock" class="nc-control"
                    value="{{ old('stock', $product->stock) }}" />
             @error('stock') <p class="mt-1 text-red-600 text-sm">{{ $message }}</p> @enderror
         </div>
@@ -44,9 +39,9 @@
 
     <!-- Category -->
     <div>
-        <label for="category_id" class="block text-sm font-medium">{{ __('Category') }}</label>
+        <label for="category_id" class="mb-2 block text-sm font-semibold">{{ __('Category') }}</label>
         <select name="category_id" id="category_id"
-                class="mt-1 block w-full border rounded px-2 py-1">
+                class="nc-select">
             @foreach($categories as $id => $name)
                 <option value="{{ $id }}" {{ old('category_id', $product->category_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
             @endforeach
@@ -56,12 +51,12 @@
 
     <!-- Image Upload -->
     <div>
-        <label for="image_url" class="block text-sm font-medium">{{ __('Image URL') }}</label>
+        <label for="image_url" class="mb-2 block text-sm font-semibold">{{ __('Image URL') }}</label>
         <input
             type="url"
             name="image_url"
             id="image_url"
-            class="mt-1 block w-full border rounded px-2 py-1"
+            class="nc-control"
             value="{{ old('image_url', $product->image_url) }}"
         />
         @error('image_url') <p class="mt-1 text-red-600 text-sm">{{ $message }}</p> @enderror
@@ -106,8 +101,8 @@
     </div>
 
     <!-- Submit & Cancel -->
-    <div class="flex justify-end space-x-2">
-        <x-button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">{{ $submitButtonText }}</x-button>
-        <x-button href="{{ route('admin.products.index') }}" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">{{ __('Cancel') }}</x-button>
+    <div class="flex flex-wrap justify-end gap-3 border-t border-gray-200 pt-5 dark:border-gray-700">
+        <a href="{{ route('admin.products.index') }}" class="nc-btn-secondary">{{ __('Cancel') }}</a>
+        <button type="submit" class="nc-btn-primary"><x-icon name="check" width="16" height="16" />{{ $submitButtonText }}</button>
     </div>
 </form>

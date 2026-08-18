@@ -8,7 +8,6 @@ use App\Models\ProductReview;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class ProductReviewController extends Controller
 {
@@ -52,38 +51,6 @@ class ProductReviewController extends Controller
             'average_rating' => $product->averageRating(),
             'review' => $review,
         ]);
-    }
-
-    /**
-     * Show the "to-review" page – products bought by user but not yet reviewed.
-     * @throws Exception
-     */
-    public function todo(Request $request)
-    {
-        if ($request->header('HX-Request')) {
-            $user = Auth::user();
-
-            // Fetch products from completed orders of user, not yet reviewed
-            $subQuery = DB::table('product_reviews')
-                ->select('product_id')
-                ->whereNull('deleted_at')
-                ->where('user_id', $user->id);
-
-            $products = Product::query()
-                ->whereIn('id', function ($q) use ($user) {
-                    $q->select('product_id')
-                        ->from('order_items')
-                        ->join('orders', 'orders.id', '=', 'order_items.order_id')
-                        ->where('orders.user_id', $user->id)
-                        ->where('orders.status', 'completed');
-                })
-                ->whereNotIn('id', $subQuery);
-
-            $products = $products->latest()->paginate(10)->withQueryString();
-            return view('partials.customer_todo_reviews_table', compact('products'));
-        }
-
-        return view('customer.reviews.htmx-todo');
     }
 
     public function list(Product $product, Request $request): JsonResponse

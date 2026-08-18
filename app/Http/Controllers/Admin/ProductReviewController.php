@@ -42,6 +42,7 @@ class ProductReviewController extends Controller
     {
         // Authorization is handled by the `auth:admin` middleware on the route group.
 
+        $review->load(['product', 'user']);
         return view('admin.reviews.show', compact('review'));
     }
 

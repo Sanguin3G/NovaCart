@@ -32,7 +32,7 @@ class ReviewController extends Controller
                 ->from('order_items')
                 ->join('orders', 'orders.id', '=', 'order_items.order_id')
                 ->where('orders.user_id', $userId)
-                ->where('orders.status', 'completed');
+                ->whereIn('orders.status', ['completed', 'delivered']);
         })
             ->whereNotIn('id', $reviewed);
 

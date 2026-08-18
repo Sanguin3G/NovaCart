@@ -5,31 +5,26 @@
         @method('PUT')
     @endif
 
-    <input type="hidden" name="_token" value="{{ csrf_token() }}">
-    @if($category->exists)
-        <input type="hidden" name="_method" value="PUT">
-    @endif
-
     <!-- Name -->
     <div>
-        <label for="name" class="block text-sm font-medium">{{ __('Name') }}</label>
-        <input type="text" name="name" id="name" class="mt-1 block w-full border rounded px-2 py-1"
+        <label for="name" class="mb-2 block text-sm font-semibold">{{ __('Name') }}</label>
+        <input type="text" name="name" id="name" class="nc-control"
                value="{{ old('name', $category->name) }}">
         @error('name') <p class="mt-1 text-red-600 text-sm">{{ $message }}</p> @enderror
     </div>
 
     <!-- Description -->
     <div>
-        <label for="description" class="block text-sm font-medium">{{ __('Description') }}</label>
+        <label for="description" class="mb-2 block text-sm font-semibold">{{ __('Description') }}</label>
         <textarea name="description" id="description" rows="4" 
-                  class="mt-1 block w-full border rounded px-2 py-1">{{ old('description', $category->description) }}</textarea>
+                  class="nc-control min-h-28 py-3">{{ old('description', $category->description) }}</textarea>
         @error('description') <p class="mt-1 text-red-600 text-sm">{{ $message }}</p> @enderror
     </div>
 
     <!-- Parent Category -->
     <div>
-        <label for="parent_id" class="block text-sm font-medium">{{ __('Parent Category') }}</label>
-        <select name="parent_id" id="parent_id" class="mt-1 block w-full border rounded px-2 py-1">
+        <label for="parent_id" class="mb-2 block text-sm font-semibold">{{ __('Parent Category') }}</label>
+        <select name="parent_id" id="parent_id" class="nc-select">
             <option value="">{{ __('None') }}</option>
             @foreach($parentCategories as $id => $name)
                 <option value="{{ $id }}" {{ old('parent_id', $category->parent_id) == $id ? 'selected' : '' }}>{{ $name }}</option>
@@ -51,8 +46,8 @@
     </div>
 
     <!-- Submit & Cancel -->
-    <div class="flex justify-end space-x-2">
-        <x-button type="submit" class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">{{ $submitButtonText }}</x-button>
-        <x-button href="{{ route('admin.categories.index') }}" class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">{{ __('Cancel') }}</x-button>
+    <div class="flex flex-wrap justify-end gap-3 border-t border-gray-200 pt-5 dark:border-gray-700">
+        <a href="{{ route('admin.categories.index') }}" class="nc-btn-secondary">{{ __('Cancel') }}</a>
+        <button type="submit" class="nc-btn-primary"><x-icon name="check" width="16" height="16" />{{ $submitButtonText }}</button>
     </div>
-</form> 
+</form>

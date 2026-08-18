@@ -1,30 +1,25 @@
-// Delegated handler for opening <dialog> modals
 document.addEventListener('click', (event) => {
     const btn = event.target.closest('[data-modal-open]');
-    if (!btn) return;
-    event.preventDefault();
+    if (btn) {
+        event.preventDefault();
+        const modal = document.getElementById(btn.dataset.modalOpen);
+        modal?.classList.add('is-open');
+        modal?.classList.remove('hidden');
+        modal?.querySelector('input, textarea, select')?.focus({preventScroll: true});
+    }
 
-    const id = btn.getAttribute('data-modal-open');
-    const dialog = document.getElementById(id);
-    if (dialog && typeof dialog.showModal === 'function') {
-        dialog.showModal();
+    const close = event.target.closest('[data-modal-close]');
+    if (close) {
+        close.closest('.nc-modal')?.classList.remove('is-open');
+    }
+
+    if (event.target.classList.contains('nc-modal')) {
+        event.target.classList.remove('is-open');
     }
 });
 
-// Close modal when clicking on backdrop, and auto-open on error states
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('dialog').forEach(dialog => {
-        // Close by clicking outside
-        dialog.addEventListener('click', (e) => {
-            const rect = dialog.getBoundingClientRect();
-            if (
-                e.clientX < rect.left ||
-                e.clientX > rect.right ||
-                e.clientY < rect.top ||
-                e.clientY > rect.bottom
-            ) {
-                dialog.close();
-            }
-        });
-    });
-}); 
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        document.querySelectorAll('.nc-modal.is-open').forEach((modal) => modal.classList.remove('is-open'));
+    }
+});

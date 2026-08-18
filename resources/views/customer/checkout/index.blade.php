@@ -1,13 +1,7 @@
-<x-layouts.app>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Checkout') }}
-        </h2>
-    </x-slot>
-
-    <div id="checkout-view" class="py-12">
-        <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-900 shadow-xl sm:rounded-lg">
+<x-layouts.app :title="__('Checkout')">
+    <div id="checkout-view" class="nc-page">
+        <header class="nc-page-header"><div><p class="nc-eyebrow">{{ __('Shop') }}</p><h1 class="nc-title">{{ __('Checkout') }}</h1><p class="nc-subtitle">{{ __('Enter your delivery details and review the order before placing it.') }}</p></div></header>
+            <div class="nc-card">
                 <div class="md:grid md:grid-cols-10 md:gap-x-12 p-6 sm:p-8">
                     <!-- Checkout Form -->
                     <div class="md:col-span-6">
@@ -19,11 +13,11 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                     <div class="sm:col-span-2">
                                         <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
-                                        <input type="text" name="name" id="name" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="{{ old('name', auth()->check() ? auth()->user()->name : '') }}">
+                                        <input type="text" name="name" id="name" required class="nc-control" value="{{ old('name', auth()->check() ? auth()->user()->name : '') }}">
                                     </div>
                                     <div>
                                         <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-                                        <input type="email" name="email" id="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm" value="{{ old('email', auth()->check() ? auth()->user()->email : '') }}">
+                                        <input type="email" name="email" id="email" required class="nc-control" value="{{ old('email', auth()->check() ? auth()->user()->email : '') }}">
                                     </div>
                                 </div>
                             </section>
@@ -32,13 +26,13 @@
                             <section>
                                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-5 border-b pb-3">Shipping</h3>
                                 <label for="shipping_address" class="block text-sm font-medium">Address</label>
-                                <textarea name="shipping_address" id="shipping_address" rows="4" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm"></textarea>
+                                <textarea name="shipping_address" id="shipping_address" rows="4" required class="nc-control min-h-28 py-3"></textarea>
                             </section>
                             
                             <!-- Payment -->
                             <section>
                                 <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-5 border-b pb-3">Payment</h3>
-                                <select name="payment_method" id="payment_method" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                                <select name="payment_method" id="payment_method" class="nc-select">
                                     <option value="credit_card">Credit Card (Mock)</option>
                                     <option value="paypal">PayPal (Mock)</option>
                                     <option value="bank_transfer">Bank Transfer (Mock)</option>
@@ -48,7 +42,7 @@
                             <div id="form-errors" class="text-red-500 text-sm"></div>
 
                             <div class="mt-10 pt-6 border-t flex justify-end">
-                                <button type="submit" id="submit-checkout-btn" class="px-8 py-3 bg-orange-600 text-white rounded-md hover:bg-orange-700">
+                                <button type="submit" id="submit-checkout-btn" class="nc-btn-primary px-8">
                                     Complete Checkout
                                 </button>
                             </div>

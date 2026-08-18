@@ -1,8 +1,7 @@
 <x-layouts.app :title="__('Product Orders')">
-    <div class="mb-6"><a href="{{ route('admin.products.index') }}" class="text-orange-600 hover:underline">← {{ __('Back to products') }}</a><h1 class="mt-2 text-2xl font-semibold">{{ __('Orders containing :product', ['product' => $product->name]) }}</h1></div>
-    <form class="mb-4 flex flex-wrap gap-3" hx-get="{{ route('admin.products.orders', $product) }}" hx-target="#orders-table" hx-trigger="change, keyup changed delay:300ms from:input" hx-push-url="true">
-        <input name="search" placeholder="{{ __('Search order #') }}" value="{{ request('search') }}" class="rounded border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900">
-        <select name="status_filter" class="rounded border-zinc-300 dark:border-zinc-700 dark:bg-zinc-900"><option value="all">{{ __('All Statuses') }}</option>@foreach(['pending','processing','shipped','completed','cancelled'] as $status)<option value="{{ $status }}" @selected(request('status_filter') === $status)>{{ ucfirst($status) }}</option>@endforeach</select>
-    </form>
-    <div id="orders-table">@include('partials.admin_orders_table', ['orders' => $orders])</div>
+    <div class="nc-page">
+        <header class="nc-page-header"><div><a href="{{ route('admin.products.index') }}" class="nc-btn-link"><x-icon name="chevron-left" width="15" height="15" />{{ __('Back to products') }}</a><p class="nc-eyebrow mt-4">{{ __('Product activity') }}</p><h1 class="nc-title">{{ __('Orders containing :product', ['product' => $product->name]) }}</h1><p class="nc-subtitle">{{ __('Review orders that include this product.') }}</p></div></header>
+        <form class="nc-toolbar" hx-get="{{ route('admin.products.orders', $product) }}" hx-target="#orders-table" hx-trigger="change, keyup changed delay:300ms from:input" hx-push-url="true"><div class="nc-toolbar-group"><div class="relative w-full sm:max-w-sm"><x-icon name="search" class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" width="17" height="17" /><label class="sr-only" for="product-orders-search">{{ __('Search orders') }}</label><input id="product-orders-search" name="search" placeholder="{{ __('Search order number…') }}" value="{{ request('search') }}" class="nc-search"></div><select name="status_filter" class="nc-select"><option value="all">{{ __('All statuses') }}</option>@foreach(['pending','processing','shipped','completed','cancelled'] as $status)<option value="{{ $status }}" @selected(request('status_filter') === $status)>{{ ucfirst($status) }}</option>@endforeach</select></div></form>
+        <section id="orders-table" class="nc-card">@include('partials.admin_orders_table', ['orders' => $orders])</section>
+    </div>
 </x-layouts.app>

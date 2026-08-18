@@ -15,6 +15,7 @@ import './admin/product.js';
 import './settings/deleteAccount';
 import './customer/order-actions.js';
 import './admin/order-actions.js';
+import './admin/reviews.js';
 import {initButtonLoading, setButtonLoading} from './utils/buttonLoading';
 import {updateCartIcon} from './utils/uiHelpers.js';
 import './theme.js';
@@ -24,7 +25,14 @@ document.addEventListener('htmx:configRequest', (event) => {
     event.detail.headers['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]')?.content;
     event.detail.headers.Accept = 'text/html';
 });
-document.addEventListener('htmx:responseError', () => Toast.error('Could not load that section. Please try again.'));
+document.addEventListener('htmx:responseError', (event) => {
+    Toast.error('Could not load that section. Please try again.');
+    const target = event.detail?.target;
+    if (target) {
+        target.innerHTML = `<div class="nc-state"><svg class="text-red-500" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 8v5M12 17h.01"/><path d="m10.3 3.8-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-3.2l-8-14a2 2 0 0 0-3.4 0Z"/></svg><p class="nc-state-title">Could not load this section</p><p class="nc-state-copy">Check the request and try again.</p><button type="button" class="nc-btn-secondary js-htmx-retry">Try again</button></div>`;
+        target.querySelector('.js-htmx-retry')?.addEventListener('click', () => htmx.trigger(target, 'load'), {once: true});
+    }
+});
 
 // Make utilities available globally
 window.Toast = Toast;

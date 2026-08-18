@@ -15,8 +15,10 @@ document.addEventListener('change', async (event) => {
     try {
         const res = await api.patch(url);
         Toast.success(res.message || 'Status updated successfully.');
+        const refreshTarget = toggle.closest('[id$="-table"]');
+        if (refreshTarget && window.htmx) window.htmx.trigger(refreshTarget, 'load');
     } catch (err) {
         Toast.error(err.message || 'Failed to update status.');
         toggle.checked = prev;
     }
-}); 
+});

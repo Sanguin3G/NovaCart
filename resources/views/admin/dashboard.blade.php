@@ -1,53 +1,17 @@
 <x-layouts.app :title="__('Dashboard')">
-    <div class="container mx-auto p-6 space-y-6">
-        <!-- Metrics Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Users -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-5 flex items-center">
-                <div class="p-3 bg-blue-500 rounded-full text-white">
-                    <x-phosphor-user-circle aria-hidden="true" width="24" height="24"/>
-                </div>
-                <div class="ml-4">
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">{{ __('Users') }}</p>
-                    <p class="text-2xl font-semibold">{{ $users }}</p>
-                </div>
-            </div>
-            <!-- Total Categories -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-5 flex items-center">
-                <div class="p-3 bg-green-500 rounded-full text-white">
-                    <x-phosphor-tag aria-hidden="true" width="24" height="24"/>
-                </div>
-                <div class="ml-4">
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">{{ __('Categories') }}</p>
-                    <p class="text-2xl font-semibold">{{ $totalCategories }}</p>
-                </div>
-            </div>
-            <!-- Active Categories -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-5 flex items-center">
-                <div class="p-3 bg-yellow-500 rounded-full text-white">
-                    <x-phosphor-check-circle aria-hidden="true" width="24" height="24"/>
-                </div>
-                <div class="ml-4">
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">{{ __('Active Categories') }}</p>
-                    <p class="text-2xl font-semibold">{{ $activeCategories }}</p>
-                </div>
-            </div>
-            <!-- Total Products -->
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-5 flex items-center">
-                <div class="p-3 bg-purple-500 rounded-full text-white">
-                    <x-phosphor-package aria-hidden="true" width="24" height="24"/>
-                </div>
-                <div class="ml-4">
-                    <p class="text-gray-500 dark:text-gray-400 text-sm">{{ __('Products') }}</p>
-                    <p class="text-2xl font-semibold">{{ $totalProducts }}</p>
-                </div>
-            </div>
+    <div class="nc-page">
+        <header class="nc-page-header"><div><p class="nc-eyebrow">{{ __('Platform') }}</p><h1 class="nc-title">{{ __('Dashboard') }}</h1><p class="nc-subtitle">{{ __('A calm overview of the store and the work that needs attention.') }}</p></div><a href="{{ route('admin.users.index') }}" class="nc-btn-secondary"><x-icon name="user" width="17" height="17"/>{{ __('Manage customers') }}</a></header>
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            @foreach([
+                ['label' => __('Customers'), 'value' => $users, 'icon' => 'user', 'tone' => 'text-blue-500'],
+                ['label' => __('Categories'), 'value' => $totalCategories, 'icon' => 'tag', 'tone' => 'text-emerald-500'],
+                ['label' => __('Active categories'), 'value' => $activeCategories, 'icon' => 'check', 'tone' => 'text-amber-500'],
+                ['label' => __('Products'), 'value' => $totalProducts, 'icon' => 'package', 'tone' => 'text-purple-500'],
+            ] as $metric)
+                <div class="nc-card flex items-center gap-4 p-5"><div class="grid h-11 w-11 place-items-center rounded-xl bg-gray-100 dark:bg-gray-800"><x-icon name="{{ $metric['icon'] }}" class="{{ $metric['tone'] }}" width="23" height="23"/></div><div><p class="text-sm text-gray-500 dark:text-gray-400">{{ $metric['label'] }}</p><p class="mt-1 text-2xl font-semibold text-gray-950 dark:text-white">{{ $metric['value'] }}</p></div></div>
+            @endforeach
         </div>
-
-        <!-- Chart: Top Categories -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-            <h3 class="text-lg font-semibold mb-4">{{ __('Top Categories by Products') }}</h3>
-            <canvas id="categoryChart" height="100"></canvas>
+        <div class="nc-card nc-card-body"><h2 class="mb-5 text-lg font-semibold text-gray-950 dark:text-white">{{ __('Top categories by products') }}</h2><div class="h-72"><canvas id="categoryChart"></canvas></div>
         </div>
     </div>
 
